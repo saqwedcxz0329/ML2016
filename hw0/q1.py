@@ -3,7 +3,9 @@ import sys
 import os
 
 class q1(object):
-	"""docstring for q1"""
+	def __init__(self):
+		pass
+
 if __name__ == '__main__':
 	request_col = int(sys.argv[1])
 	filename = sys.argv[2]
