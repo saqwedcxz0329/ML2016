@@ -1,0 +1,107 @@
+# depslib dependency file v1.0
+1475771046 source:d:\google drive\台大\ml\ml-hw1\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<string.h>
+	<StationDatas.h>
+	<ParseData.h>
+
+1475633346 source:d:\google drive\台大\ml\ml-hw1\src\stationdata.cpp
+	"StationData.h"
+
+1475633556 d:\google drive\台大\ml\ml-hw1\include\stationdata.h
+
+1475634272 source:d:\google drive\台大\ml\ml-hw1\src\stationdatas.cpp
+	"StationDatas.h"
+
+1475634488 d:\google drive\台大\ml\ml-hw1\include\stationdatas.h
+
+1475770875 d:\google drive\台大\ml\ml-hw1\include\parsedata.h
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475771207 source:d:\google drive\台大\ml\ml-hw1\src\parsedata.cpp
+	"ParseData.h"
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475754290 source:d:\googledrive\台大\ml\ml-hw1\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<string.h>
+	<StationDatas.h>
+	<ParseData.h>
+
+1475634488 d:\googledrive\台大\ml\ml-hw1\include\stationdatas.h
+
+1475751846 d:\googledrive\台大\ml\ml-hw1\include\parsedata.h
+	<iostream>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475753557 source:d:\googledrive\台大\ml\ml-hw1\src\parsedata.cpp
+	"ParseData.h"
+	<iostream>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475634272 source:d:\googledrive\台大\ml\ml-hw1\src\stationdatas.cpp
+	"StationDatas.h"
+
+1475750888 source:d:\googledrive\台大\ml\ml-hw1\src\typeconvert.cpp
+	"TypeConvert.h"
+
+1475750898 d:\googledrive\台大\ml\ml-hw1\include\typeconvert.h
+
+1475750888 source:d:\google drive\台大\ml\ml-hw1\src\typeconvert.cpp
+	"TypeConvert.h"
+
+1475750898 d:\google drive\台大\ml\ml-hw1\include\typeconvert.h
+
+1475771207 source:c:\users\louis\documents\ml2016\hw1\src\parsedata.cpp
+	"ParseData.h"
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475770875 c:\users\louis\documents\ml2016\hw1\include\parsedata.h
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475634272 source:c:\users\louis\documents\ml2016\hw1\src\stationdatas.cpp
+	"StationDatas.h"
+
+1475634488 c:\users\louis\documents\ml2016\hw1\include\stationdatas.h
+
+1475750888 source:c:\users\louis\documents\ml2016\hw1\src\typeconvert.cpp
+	"TypeConvert.h"
+
+1475750898 c:\users\louis\documents\ml2016\hw1\include\typeconvert.h
+
