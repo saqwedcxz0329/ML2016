@@ -36,7 +36,7 @@
 	<vector>
 	<map>
 
-1475754290 source:d:\googledrive\台大\ml\ml-hw1\main.cpp
+1475771347 source:d:\googledrive\台大\ml\ml-hw1\main.cpp
 	<iostream>
 	<fstream>
 	<stdlib.h>
@@ -46,17 +46,19 @@
 
 1475634488 d:\googledrive\台大\ml\ml-hw1\include\stationdatas.h
 
-1475751846 d:\googledrive\台大\ml\ml-hw1\include\parsedata.h
+1475770875 d:\googledrive\台大\ml\ml-hw1\include\parsedata.h
 	<iostream>
+	<string>
 	<string.h>
 	<stdlib.h>
 	<fstream>
 	<vector>
 	<map>
 
-1475753557 source:d:\googledrive\台大\ml\ml-hw1\src\parsedata.cpp
+1475771207 source:d:\googledrive\台大\ml\ml-hw1\src\parsedata.cpp
 	"ParseData.h"
 	<iostream>
+	<string>
 	<string.h>
 	<stdlib.h>
 	<fstream>
@@ -76,7 +78,43 @@
 
 1475750898 d:\google drive\台大\ml\ml-hw1\include\typeconvert.h
 
-1475771207 source:c:\users\louis\documents\ml2016\hw1\src\parsedata.cpp
+1475634272 source:e:\googledrive\台大\ml\ml-hw1\src\stationdatas.cpp
+	"StationDatas.h"
+
+1475634488 e:\googledrive\台大\ml\ml-hw1\include\stationdatas.h
+
+1475750888 source:e:\googledrive\台大\ml\ml-hw1\src\typeconvert.cpp
+	"TypeConvert.h"
+
+1475750898 e:\googledrive\台大\ml\ml-hw1\include\typeconvert.h
+
+1476003740 source:e:\googledrive\台大\ml\ml-hw1\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<string.h>
+	<StationDatas.h>
+	<ParseData.h>
+	<LinearRegression.h>
+
+1475770875 e:\googledrive\台大\ml\ml-hw1\include\parsedata.h
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1476010633 e:\googledrive\台大\ml\ml-hw1\include\linearregression.h
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<time.h>
+
+1475982816 source:e:\googledrive\台大\ml\ml-hw1\src\parsedata.cpp
 	"ParseData.h"
 	<iostream>
 	<string>
@@ -86,7 +124,28 @@
 	<vector>
 	<map>
 
-1475770875 c:\users\louis\documents\ml2016\hw1\include\parsedata.h
+1476012607 source:e:\googledrive\台大\ml\ml-hw1\src\linearregression.cpp
+	"LinearRegression.h"
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<time.h>
+
+1476018826 source:e:\ml-hw1\main.cpp
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<StationDatas.h>
+	<ParseData.h>
+	<LinearRegression.h>
+
+1475634488 e:\ml-hw1\include\stationdatas.h
+
+1476018666 e:\ml-hw1\include\parsedata.h
 	<iostream>
 	<string>
 	<string.h>
@@ -95,13 +154,39 @@
 	<vector>
 	<map>
 
-1475634272 source:c:\users\louis\documents\ml2016\hw1\src\stationdatas.cpp
+1476031185 e:\ml-hw1\include\linearregression.h
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<time.h>
+	<math.h>
+
+1476027600 source:e:\ml-hw1\src\linearregression.cpp
+	"LinearRegression.h"
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<time.h>
+
+1476018835 source:e:\ml-hw1\src\parsedata.cpp
+	"ParseData.h"
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1475634272 source:e:\ml-hw1\src\stationdatas.cpp
 	"StationDatas.h"
 
-1475634488 c:\users\louis\documents\ml2016\hw1\include\stationdatas.h
-
-1475750888 source:c:\users\louis\documents\ml2016\hw1\src\typeconvert.cpp
+1475750888 source:e:\ml-hw1\src\typeconvert.cpp
 	"TypeConvert.h"
 
-1475750898 c:\users\louis\documents\ml2016\hw1\include\typeconvert.h
+1475750898 e:\ml-hw1\include\typeconvert.h
 

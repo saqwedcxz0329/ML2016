@@ -17,35 +17,61 @@ ParseData::~ParseData()
     //dtor
 }
 
-void ParseData::readFile(char* filePath)
+void ParseData::readFile(char* m_filePath)
 {
-
-    data_file.open(filePath);
+    string tmp(m_filePath);
+    filePath = tmp;
+    data_file.open(m_filePath);
 }
+
+void ParseData::outFile(char* filePath, map<string, double> predict_pm)
+{
+    data_output_file.open(filePath);
+    data_output_file<<"id,value\n";
+    char s[10];
+    for(int i = 0; i < predict_pm.size(); i++)
+    {
+        sprintf(s, "%d", i);
+        string tmp(s);
+        string id = "id_" + tmp;
+//        cout<<id<<endl;
+        data_output_file<<id<<","<<predict_pm[id]<<"\n";
+    }
+}
+
 
 map<string, map<string, vector<double> > > ParseData::captureData()
 {
     string label;
-    getline(data_file, label, '\n');
+    bool TrainingFlag = isTraining();
+    int index = 2;
+    if(TrainingFlag)
+    {
+        getline(data_file, label, '\n');
+        index = 3;
+    }
 
     string data_info;
     map<string, map<string, vector<double> > > day_value;
     map<string, vector<double> > item_value;
     while(getline(data_file, data_info, '\n'))
     {
+
         vector<string> v = split(data_info, ",");
         vector<double> value;
-        for(int i = 3; i < v.size(); i++)
+        for(int i = index; i < v.size(); i++)
         {
             double d = atof(v[i].c_str());
             value.push_back(d);
         }
-        item_value[v[2]] = value;
-        if(v[2] == "WS_HR"){
+        item_value[v[index-1]] = value;
+        if(v[index-1] == "WS_HR")
+        {
             day_value[v[0]] = item_value;
             map<string, vector<double> > item_value;
         }
     }
+    data_file.close();
     return day_value;
 }
 
@@ -71,4 +97,13 @@ vector<string> ParseData::split(string str, char* symbol)
     }
     delete tmp;
     return v;
+}
+
+bool ParseData::isTraining()
+{
+    if(filePath.find("train") != string::npos)
+    {
+        return true;
+    }
+    return false;
 }

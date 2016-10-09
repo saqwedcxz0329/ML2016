@@ -17,11 +17,15 @@ class ParseData
         ParseData();
         virtual ~ParseData();
         void readFile(char*);
+        void outFile(char*, map<string, double>);
         map<string, map<string, vector<double> > > captureData();
 
     private:
+        string filePath;
         ifstream data_file;
+        ofstream data_output_file;
         vector<string> split(string, char*);
+        bool isTraining();
 };
 
 #endif // PARSEDATA_H

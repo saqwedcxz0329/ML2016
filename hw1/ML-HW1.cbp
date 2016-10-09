@@ -34,10 +34,12 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/LinearRegression.h" />
 		<Unit filename="include/ParseData.h" />
 		<Unit filename="include/StationDatas.h" />
 		<Unit filename="include/TypeConvert.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/LinearRegression.cpp" />
 		<Unit filename="src/ParseData.cpp" />
 		<Unit filename="src/StationDatas.cpp" />
 		<Unit filename="src/TypeConvert.cpp" />
