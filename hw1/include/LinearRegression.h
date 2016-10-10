@@ -15,11 +15,11 @@ class LinearRegression
     public:
         LinearRegression();
         virtual ~LinearRegression();
-        vector<double> training(map<string, map<string, vector<double> > >);
+        vector<double> training(vector<vector<double> >, vector<double>);
         map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
     private:
         vector<double> initX(int);
-        double lossFunction(map<string, map<string, vector<double> > > , vector<double>& , vector<vector<double> >& );
+        double lossFunction(vector<vector<double> >, vector<double>& , vector<vector<double> >& , vector<double>);
         void gradientDescent(vector<double>&, vector<double>, vector<vector<double> >);
         double regularization(vector<double>, vector<double>&, double);
 

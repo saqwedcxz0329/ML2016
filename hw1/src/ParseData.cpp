@@ -77,6 +77,56 @@ map<string, map<string, vector<double> > > ParseData::captureData()
     return day_value;
 }
 
+vector<vector<double> >  ParseData::convertToTrainSet(map<string, map<string, vector<double> > > datas, vector<double> &y_heads)
+{
+    vector<vector<double> > train_set;
+    for(map<string, map<string, vector<double> > >::iterator outer_iter = datas.begin(); outer_iter != datas.end(); ++outer_iter)
+    {
+//        cout<<outer_iter->first<<endl;
+        int value_size = outer_iter->second["PM2.5"].size();
+        y_heads.push_back(outer_iter->second["PM2.5"][value_size-1]);
+        vector<double> features;
+        for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
+        {
+//            cout<<inner_iter->first<<endl;
+            vector<double> values = inner_iter->second;
+            features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
+        }
+        train_set.push_back(features);
+    }
+
+//    featureScaling(train_set);
+//    for(int i = 0; i < train_set[0].size(); i++){
+//        cout<<train_set[0][i]<<endl;
+//    }
+
+    return train_set;
+}
+
+void ParseData::featureScaling(vector<vector<double> > &train_set)
+{
+    for(int i = 0; i < train_set.size(); i++)
+    {
+        double sigma_x = 0;
+        double sigma_x_square = 0;
+        for(int j = 0; j < train_set[i].size(); j++)
+        {
+            sigma_x = sigma_x + train_set[i][j];
+            sigma_x_square = sigma_x_square + train_set[i][j] * train_set[i][j];
+        }
+        double mean_x = 0;
+        double sd_x = 0;
+        mean_x = sigma_x / train_set[i].size();
+        sd_x = sqrt( sigma_x_square / train_set[i].size()  - mean_x*mean_x);
+
+        for(int j = 0; j < train_set[i].size(); j++){
+            train_set[i][j] = (train_set[i][j] - mean_x) / sd_x;
+        }
+    }
+}
+
+
+
 vector<string> ParseData::split(string str, char* symbol)
 {
     char* tmp = new char[str.length()+1];
