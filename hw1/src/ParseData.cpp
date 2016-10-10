@@ -77,6 +77,21 @@ map<string, map<string, vector<double> > > ParseData::captureData()
     return day_value;
 }
 
+vector<vector<double> >  ParseData::convertToTrainSet(map<string, map<string, vector<double> > > datas)
+{
+    for(map<string, map<string, vector<double> > >::iterator outer_iter = datas.begin(); outer_iter != datas.end(); ++outer_iter)
+    {
+        vector<double> features;
+        features.push_back(1); // x0 = 1;
+        for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
+        {
+            vector<double> values = inner_iter->second;
+            features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
+        }
+    }
+}
+
+
 vector<string> ParseData::split(string str, char* symbol)
 {
     char* tmp = new char[str.length()+1];

@@ -31,7 +31,7 @@ vector<double> LinearRegression::training(map<string, map<string, vector<double>
         double error_value = lossFunction(train_set, parameters, past_gradients);
         cout<<i<<"==="<<error_value<<endl;
         i++;
-        if (error_value<4500)break;
+        if (error_value<3500)break;
     }
     return parameters;
 
@@ -162,7 +162,6 @@ void LinearRegression::gradientDescent(vector<double> &parameters, vector<double
         {
             sigma_past[j] = sigma_past[j] + past_gradients[i][j] * past_gradients[i][j];
         }
-
     }
 
     try

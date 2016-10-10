@@ -190,3 +190,50 @@
 
 1475750898 e:\ml-hw1\include\typeconvert.h
 
+1476107129 source:c:\users\louis\documents\ml2016\hw1\main.cpp
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ParseData.h>
+	<LinearRegression.h>
+
+1476107891 c:\users\louis\documents\ml2016\hw1\include\parsedata.h
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
+1476107129 c:\users\louis\documents\ml2016\hw1\include\linearregression.h
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<time.h>
+	<math.h>
+
+1476108327 source:c:\users\louis\documents\ml2016\hw1\src\linearregression.cpp
+	"LinearRegression.h"
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<time.h>
+	<math.h>
+
+1476107129 source:c:\users\louis\documents\ml2016\hw1\src\parsedata.cpp
+	"ParseData.h"
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+
