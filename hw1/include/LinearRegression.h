@@ -19,8 +19,9 @@ class LinearRegression
         map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
     private:
         vector<double> initX(int);
-        double lossFunction(map<string, map<string, vector<double> > > , vector<double>& , vector<vector<double>>& );
+        double lossFunction(map<string, map<string, vector<double> > > , vector<double>& , vector<vector<double> >& );
         void gradientDescent(vector<double>&, vector<double>, vector<vector<double> >);
+        double regularization(vector<double>, vector<double>&, double);
 
 };
 

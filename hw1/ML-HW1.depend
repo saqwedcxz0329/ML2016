@@ -133,13 +133,12 @@
 	<stdlib.h>
 	<time.h>
 
-1476018826 source:e:\ml-hw1\main.cpp
+1476034985 source:e:\ml-hw1\main.cpp
 	<iostream>
 	<fstream>
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
-	<StationDatas.h>
 	<ParseData.h>
 	<LinearRegression.h>
 
@@ -154,7 +153,7 @@
 	<vector>
 	<map>
 
-1476031185 e:\ml-hw1\include\linearregression.h
+1476070281 e:\ml-hw1\include\linearregression.h
 	<iostream>
 	<map>
 	<vector>
@@ -163,7 +162,7 @@
 	<time.h>
 	<math.h>
 
-1476027600 source:e:\ml-hw1\src\linearregression.cpp
+1476090867 source:e:\ml-hw1\src\linearregression.cpp
 	"LinearRegression.h"
 	<iostream>
 	<map>
@@ -171,8 +170,9 @@
 	<string>
 	<stdlib.h>
 	<time.h>
+	<math.h>
 
-1476018835 source:e:\ml-hw1\src\parsedata.cpp
+1476078712 source:e:\ml-hw1\src\parsedata.cpp
 	"ParseData.h"
 	<iostream>
 	<string>

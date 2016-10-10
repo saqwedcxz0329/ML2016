@@ -35,6 +35,8 @@ void ParseData::outFile(char* filePath, map<string, double> predict_pm)
         string tmp(s);
         string id = "id_" + tmp;
 //        cout<<id<<endl;
+        if(predict_pm[id]<0)
+            predict_pm[id]=0;
         data_output_file<<id<<","<<predict_pm[id]<<"\n";
     }
 }
