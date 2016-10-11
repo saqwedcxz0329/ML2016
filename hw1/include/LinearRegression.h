@@ -12,16 +12,16 @@ using namespace std;
 
 class LinearRegression
 {
-    public:
-        LinearRegression();
-        virtual ~LinearRegression();
-        vector<double> training(vector<vector<double> >, vector<double>);
-        map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
-    private:
-        vector<double> initX(int);
-        double lossFunction(vector<vector<double> >, vector<double>& , vector<vector<double> >& , vector<double>);
-        void gradientDescent(vector<double>&, vector<double>, vector<vector<double> >);
-        double regularization(vector<double>, vector<double>&, double);
+public:
+    LinearRegression();
+    virtual ~LinearRegression();
+    vector<double> training(vector<vector<double> >, vector<double>);
+    map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
+private:
+    vector<double> initX(int);
+    double lossFunction(vector<vector<double> >, vector<double>&, vector<double*> &, vector<double>);
+    void gradientDescent(vector<double> &, double [], int, vector<double*>  );
+    double regularization(vector<double>, double *, int, double);
 
 };
 
