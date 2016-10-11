@@ -18,13 +18,26 @@ vector<double> LinearRegression::training(vector<vector<double> > train_set, vec
     /***** 2 dimension *****/
 //    vector<double> parameters = initX(x_num*2 + 1);
     vector<double*>  past_gradients;
+    time_t now;
+    struct tm nowTime;
+    now = time(NULL);
+    nowTime = *localtime(&now);
+    int start_hour = nowTime.tm_hour;
+
     int i = 1;
     while(1)
     {
+        now = time(NULL);
+        nowTime = *localtime(&now);
+
         double error_value = lossFunction(train_set, parameters, past_gradients, y_heads);
-        cout<<i<<"==="<<error_value<<endl;
+//        cout<<"Time:"<<nowTime.tm_hour<<":"<<nowTime.tm_min<<":"<<nowTime.tm_sec<<endl;
+//        cout<<i<<"==="<<error_value<<endl;
         i++;
-        if (error_value<3000)break;
+        if (nowTime.tm_hour - start_hour >= 7){
+            cout<<error_value<<endl;
+            break;
+        }
     }
     return parameters;
 
@@ -77,7 +90,8 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
     double error_value = 0;
     int parameters_size = parameters.size();
     double *gradients = new double [parameters_size];
-    for(int i = 0; i < parameters_size; i++){
+    for(int i = 0; i < parameters_size; i++)
+    {
         gradients[i] = 0;
     }
     for(int m = 0; m < train_set.size(); m++)
@@ -86,14 +100,17 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
         double features[parameters_size] = {0};
 
         features[0] = 1;
-        for(int i = 1; i < parameters_size; i++){
+        for(int i = 1; i < parameters_size; i++)
+        {
             features[i] = train_set[m][i-1];
         }
 
         double y = 0;
         for(int i =0; i < parameters_size; i++)
         {
+
             y = y + parameters[i]*features[i];
+
         }
 
         for(int i = 0; i < parameters_size; i++)
@@ -105,10 +122,12 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
     }
 
     /***** regularization *****/
-//    double lambda = 0;
-//    double sigma_w_square = regularization(parameters, gradients, parameters_size, lambda);
-//    cout<<sigma_w_square<<endl;
-//    error_value = error_value + lambda*sigma_w_square;
+    double lambda = 30;
+    if(lambda!=0)
+    {
+        double sigma_w_square = regularization(parameters, gradients, parameters_size, lambda);
+        error_value = error_value + lambda*sigma_w_square;
+    }
 
     past_gradients.push_back(gradients);
     gradientDescent(parameters, gradients, parameters_size, past_gradients);
@@ -128,20 +147,6 @@ void LinearRegression::gradientDescent(vector<double> &parameters, double gradie
         {
             sigma_past[j] = sigma_past[j] + past_gradients[i][j] * past_gradients[i][j];
         }
-    }
-
-    try
-    {
-        if (gradients_size!=parameters.size())
-        {
-            cout<<"sigma_past size: "<<gradients_size<<" parameter size: "<<parameters.size()<<endl;
-            throw "parameter number is not equal feature number(gradientDescent)";
-        }
-    }
-    catch(const char* message)
-    {
-        cout<<message<<endl;
-        exit(0);
     }
 
 

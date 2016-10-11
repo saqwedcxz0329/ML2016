@@ -193,16 +193,16 @@
 1476202208 source:c:\users\louis\documents\ml2016\hw1\src\linearregression.cpp
 	"LinearRegression.h"
 
-1476199618 c:\users\louis\documents\ml2016\hw1\include\linearregression.h
+1476206422 c:\users\louis\documents\ml2016\hw1\include\linearregression.h
 	<iostream>
 	<map>
 	<vector>
 	<string>
 	<stdlib.h>
-	<time.h>
+	<ctime>
 	<math.h>
 
-1476115061 source:c:\users\louis\documents\ml2016\hw1\main.cpp
+1476204087 source:c:\users\louis\documents\ml2016\hw1\main.cpp
 	<iostream>
 	<fstream>
 	<stdio.h>

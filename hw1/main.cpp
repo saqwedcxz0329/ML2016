@@ -24,12 +24,5 @@ int main()
 
     parsedata.outFile("./data/predict.csv", predict_pm);
 
-//    map<string, vector<double> > item_value = test_data["id_0"];
-//    vector<double> value = item_value["CO"];
-//    cout<<test_data.size()<<endl;
-//    for(int i = 0; i < value.size(); i++)
-//    {
-//        cout<<value[i]<<endl;
-//    }
     return 0;
 }

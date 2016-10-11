@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <stdlib.h>
-#include <time.h>
+#include <ctime>
 #include <math.h>
 
 using namespace std;
