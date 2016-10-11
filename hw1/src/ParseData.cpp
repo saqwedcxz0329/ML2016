@@ -1,11 +1,4 @@
 #include "ParseData.h"
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <stdlib.h>
-#include <fstream>
-#include <vector>
-#include <map>
 
 ParseData::ParseData()
 {

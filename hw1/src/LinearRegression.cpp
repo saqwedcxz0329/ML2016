@@ -1,11 +1,4 @@
 #include "LinearRegression.h"
-#include <iostream>
-#include <map>
-#include <vector>
-#include <string>
-#include <stdlib.h>
-#include <time.h>
-#include <math.h>
 
 LinearRegression::LinearRegression()
 {
@@ -29,7 +22,7 @@ vector<double> LinearRegression::training(vector<vector<double> > train_set, vec
     while(1)
     {
         double error_value = lossFunction(train_set, parameters, past_gradients, y_heads);
-        cout<<i<<"==="<<error_value<<endl;
+//        cout<<i<<"==="<<error_value<<endl;
         i++;
         if (error_value<4300)break;
     }
@@ -124,6 +117,7 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
         }
 
         error_value = error_value + (y_head - y)*(y_head - y);
+        vector<double>().swap(features);
     }
 
     /***** regularization *****/
@@ -135,6 +129,7 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
     past_gradients.push_back(gradients);
     gradientDescent(parameters, gradients, past_gradients);
 
+    vector<double>().swap(gradients);
     return error_value;
 }
 
@@ -175,6 +170,7 @@ void LinearRegression::gradientDescent(vector<double> &parameters, vector<double
     {
         parameters[i] = parameters[i] - learning_rate * gradients[i] / sqrt(sigma_past[i]);
     }
+    vector<double>().swap(sigma_past);
 }
 
 double LinearRegression::regularization(vector<double> parameters, vector<double> &gradients, double lambda)
