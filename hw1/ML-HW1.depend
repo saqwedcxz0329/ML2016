@@ -252,6 +252,9 @@
 	<ctime>
 	<math.h>
 
-1476249428 source:c:\users\selab\documents\ml2016\hw1\src\linearregression.cpp
+1476256861 source:c:\users\selab\documents\ml2016\hw1\src\linearregression.cpp
 	"LinearRegression.h"
+
+1476256535 source:c:\users\selab\documents\ml2016\hw1\src\parsedata.cpp
+	"ParseData.h"
 

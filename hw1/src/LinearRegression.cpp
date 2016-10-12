@@ -54,9 +54,12 @@ map<string, double> LinearRegression::testResult(vector<double> parameters, map<
         features.push_back(1); // x0 = 1;
         for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
         {
-            vector<double> values = inner_iter->second;
+            string item = inner_iter->first;
             /***** 1 dimension *****/
-            features.insert(features.end(), values.begin(), values.end()); // add the whole values
+            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED"){
+                vector<double> values = inner_iter->second;
+                features.insert(features.end(), values.begin(), values.end()); // add all column elements
+            }
             /***** 2 dimension *****/
 //            for(int i = 0; i < values.size(); i++){
 //                features.push_back(values[i]);
