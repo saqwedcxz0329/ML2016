@@ -224,3 +224,34 @@
 1476186764 source:c:\users\louis\documents\ml2016\hw1\src\parsedata.cpp
 	"ParseData.h"
 
+1476243561 source:c:\users\selab\documents\ml2016\hw1\main.cpp
+	<iostream>
+	<fstream>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<ParseData.h>
+	<LinearRegression.h>
+
+1476243561 c:\users\selab\documents\ml2016\hw1\include\parsedata.h
+	<iostream>
+	<string>
+	<string.h>
+	<stdlib.h>
+	<fstream>
+	<vector>
+	<map>
+	<math.h>
+
+1476256681 c:\users\selab\documents\ml2016\hw1\include\linearregression.h
+	<iostream>
+	<map>
+	<vector>
+	<string>
+	<stdlib.h>
+	<ctime>
+	<math.h>
+
+1476249428 source:c:\users\selab\documents\ml2016\hw1\src\linearregression.cpp
+	"LinearRegression.h"
+

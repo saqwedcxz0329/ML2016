@@ -18,7 +18,7 @@ public:
     vector<double> training(vector<vector<double> >, vector<double>);
     map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
 private:
-    vector<double> initX(int);
+    vector<double> initW(int);
     double lossFunction(vector<vector<double> >, vector<double>&, vector<double*> &, vector<double>);
     void gradientDescent(vector<double> &, double [], int, vector<double*>  );
     double regularization(vector<double>, double *, int, double);

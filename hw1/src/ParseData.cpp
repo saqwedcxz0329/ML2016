@@ -81,10 +81,13 @@ vector<vector<double> >  ParseData::convertToTrainSet(map<string, map<string, ve
         vector<double> features;
         for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
         {
-//            cout<<inner_iter->first<<endl;
-            vector<double> values = inner_iter->second;
-            features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
+            string item = inner_iter->first;
+            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED"){
+                vector<double> values = inner_iter->second;
+                features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
+            }
         }
+//        cout<<features.size()<<endl;
         train_set.push_back(features);
     }
 
