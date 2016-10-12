@@ -1,8 +1,8 @@
 #include "LinearRegression.h"
 
-LinearRegression::LinearRegression()
+LinearRegression::LinearRegression(vector<double> m_yheads)
 {
-    //ctor
+    this->y_heads = m_yheads;
 }
 
 LinearRegression::~LinearRegression()
@@ -10,13 +10,13 @@ LinearRegression::~LinearRegression()
     //dtor
 }
 
-vector<double> LinearRegression::training(vector<vector<double> > train_set, vector<double> y_heads)
+void LinearRegression::training(vector<vector<double> > train_set)
 {
     int w_num = train_set[0].size();
     /***** 1 dimension *****/
-    vector<double> parameters = initW(w_num + 1); // initial b and wi
+    initParameters(w_num + 1); // initial b and wi
     /***** 2 dimension *****/
-//    vector<double> parameters = initW(x_num*2 + 1);
+//  parameters = initW(x_num*2 + 1);
     vector<double*>  past_gradients;
     time_t now;
     struct tm nowTime;
@@ -30,22 +30,21 @@ vector<double> LinearRegression::training(vector<vector<double> > train_set, vec
         now = time(NULL);
         nowTime = *localtime(&now);
 
-        double error_value = lossFunction(train_set, parameters, past_gradients, y_heads);
+        double error_value = lossFunction(train_set, past_gradients);
         cout<<i<<"==="<<error_value<<endl;
         i++;
         if(i >= 75000){
             break;
         }
-//        if (nowTime.tm_hour - start_hour >= 3){
+//        if (nowTime.tm_hour - start_hour >= 7){
 //            cout<<error_value<<endl;
 //            break;
 //        }
     }
-    return parameters;
 
 }
 
-map<string, double> LinearRegression::testResult(vector<double> parameters, map<string, map<string, vector<double> > > test_data)
+map<string, double> LinearRegression::testResult(map<string, map<string, vector<double> > > test_data)
 {
     map<string, double> predict_pm;
     for(map<string, map<string, vector<double> > >::iterator outer_iter = test_data.begin(); outer_iter != test_data.end(); ++outer_iter)
@@ -90,7 +89,7 @@ map<string, double> LinearRegression::testResult(vector<double> parameters, map<
 }
 
 
-double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<double> &parameters, vector<double*>  &past_gradients, vector<double> y_heads)
+double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<double*>  &past_gradients)
 {
     double error_value = 0;
     int parameters_num = parameters.size();
@@ -130,17 +129,17 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
     double lambda = 0;
     if(lambda!=0)
     {
-        double sigma_w_square = regularization(parameters, gradients, parameters_num, lambda);
+        double sigma_w_square = regularization(gradients, parameters_num, lambda);
         error_value = error_value + lambda*sigma_w_square;
     }
 
     past_gradients.push_back(gradients);
-    gradientDescent(parameters, gradients, parameters_num, past_gradients);
+    gradientDescent(gradients, parameters_num, past_gradients);
 
     return error_value;
 }
 
-void LinearRegression::gradientDescent(vector<double> &parameters, double gradients[], int gradients_num, vector<double*> past_gradients)
+void LinearRegression::gradientDescent(double gradients[], int gradients_num, vector<double*> past_gradients)
 {
     double learning_rate = 0.1;
     double sigma_past[gradients_num] = {0};
@@ -161,7 +160,7 @@ void LinearRegression::gradientDescent(vector<double> &parameters, double gradie
     }
 }
 
-double LinearRegression::regularization(vector<double> parameters, double gradients[], int gradients_num, double lambda)
+double LinearRegression::regularization(double gradients[], int gradients_num, double lambda)
 {
     double sigma_w_square = 0;
     double sigma_w = 0;
@@ -180,9 +179,8 @@ double LinearRegression::regularization(vector<double> parameters, double gradie
 
 
 
-vector<double> LinearRegression::initW(int feature_num)
+void LinearRegression::initParameters(int feature_num)
 {
-    vector<double> parameters;
     srand(time(NULL));
     double ran;
     for (int i=0; i<feature_num; i++)
@@ -190,5 +188,4 @@ vector<double> LinearRegression::initW(int feature_num)
         ran = (((float)rand()/(float)(RAND_MAX)))  * 0.01;
         parameters.push_back(ran);
     }
-    return parameters;
 }

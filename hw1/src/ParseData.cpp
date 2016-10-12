@@ -27,9 +27,8 @@ void ParseData::outFile(char* filePath, map<string, double> predict_pm)
         sprintf(s, "%d", i);
         string tmp(s);
         string id = "id_" + tmp;
-//        cout<<id<<endl;
-        if(predict_pm[id]<0)
-            predict_pm[id]=0;
+//        if(predict_pm[id]<0)
+//            predict_pm[id]=0;
         data_output_file<<id<<","<<predict_pm[id]<<"\n";
     }
 }
@@ -70,24 +69,23 @@ map<string, map<string, vector<double> > > ParseData::captureData()
     return day_value;
 }
 
-vector<vector<double> >  ParseData::convertToTrainSet(map<string, map<string, vector<double> > > datas, vector<double> &y_heads)
+vector<vector<double> >  ParseData::convertDS(map<string, map<string, vector<double> > > datas, vector<double> &y_heads)
 {
     vector<vector<double> > train_set;
     for(map<string, map<string, vector<double> > >::iterator outer_iter = datas.begin(); outer_iter != datas.end(); ++outer_iter)
     {
-//        cout<<outer_iter->first<<endl;
         int value_size = outer_iter->second["PM2.5"].size();
         y_heads.push_back(outer_iter->second["PM2.5"][value_size-1]);
         vector<double> features;
         for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
         {
             string item = inner_iter->first;
-            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED"){
+            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
+            {
                 vector<double> values = inner_iter->second;
                 features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
             }
         }
-//        cout<<features.size()<<endl;
         train_set.push_back(features);
     }
 
@@ -98,6 +96,33 @@ vector<vector<double> >  ParseData::convertToTrainSet(map<string, map<string, ve
 
     return train_set;
 }
+
+vector<vector<double> > ParseData::convertDS(map<string, map<string, vector<double> > > datas)
+{
+    vector<vector<double> > test_set;
+    for(map<string, map<string, vector<double> > >::iterator outer_iter = datas.begin(); outer_iter != datas.end(); ++outer_iter)
+    {
+        vector<double> features;
+        for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
+        {
+            string item = inner_iter->first;
+            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
+            {
+                vector<double> values = inner_iter->second;
+                features.insert(features.end(), values.begin(), values.end()); // add whole elements
+            }
+        }
+        test_set.push_back(features);
+    }
+
+//    featureScaling(test_set);
+//    for(int i = 0; i < test_set[0].size(); i++){
+//        cout<<test_set[0][i]<<endl;
+//    }
+
+    return test_set;
+}
+
 
 void ParseData::featureScaling(vector<vector<double> > &train_set)
 {
@@ -115,7 +140,8 @@ void ParseData::featureScaling(vector<vector<double> > &train_set)
         mean_x = sigma_x / train_set[i].size();
         sd_x = sqrt( sigma_x_square / train_set[i].size()  - mean_x*mean_x);
 
-        for(int j = 0; j < train_set[i].size(); j++){
+        for(int j = 0; j < train_set[i].size(); j++)
+        {
             train_set[i][j] = (train_set[i][j] - mean_x) / sd_x;
         }
     }

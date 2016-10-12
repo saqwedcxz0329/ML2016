@@ -13,15 +13,17 @@ using namespace std;
 class LinearRegression
 {
 public:
-    LinearRegression();
+    LinearRegression(vector<double>);
     virtual ~LinearRegression();
-    vector<double> training(vector<vector<double> >, vector<double>);
-    map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
+    void training(vector<vector<double> >);
+    map<string, double> testResult(map<string, map<string, vector<double> > > );
 private:
-    vector<double> initW(int);
-    double lossFunction(vector<vector<double> >, vector<double>&, vector<double*> &, vector<double>);
-    void gradientDescent(vector<double> &, double [], int, vector<double*>  );
-    double regularization(vector<double>, double *, int, double);
+    vector<double> parameters;
+    vector<double> y_heads;
+    void initParameters(int);
+    double lossFunction(vector<vector<double> >, vector<double*> &);
+    void gradientDescent(double [], int, vector<double*>);
+    double regularization(double *, int, double);
 
 };
 

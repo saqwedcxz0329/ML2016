@@ -20,7 +20,8 @@ class ParseData
         void readFile(char*);
         void outFile(char*, map<string, double>);
         map<string, map<string, vector<double> > > captureData();
-        vector<vector<double> > convertToTrainSet(map<string, map<string, vector<double> > >, vector<double>&);
+        vector<vector<double> > convertDS(map<string, map<string, vector<double> > >, vector<double>&);
+        vector<vector<double> > convertDS(map<string, map<string, vector<double> > >);
 
     private:
         string filePath;
