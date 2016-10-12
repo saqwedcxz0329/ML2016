@@ -27,8 +27,9 @@ void ParseData::outFile(char* filePath, map<string, double> predict_pm)
         sprintf(s, "%d", i);
         string tmp(s);
         string id = "id_" + tmp;
-//        if(predict_pm[id]<0)
-//            predict_pm[id]=0;
+        if(predict_pm[id]<0){
+            predict_pm[id]=0;
+        }
         data_output_file<<id<<","<<predict_pm[id]<<"\n";
     }
 }

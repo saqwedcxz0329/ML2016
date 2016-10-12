@@ -22,8 +22,8 @@ private:
     vector<double> y_heads;
     void initParameters(int);
     double lossFunction(vector<vector<double> >, vector<double*> &);
-    void gradientDescent(double [], int, vector<double*>);
-    double regularization(double *, int, double);
+    void gradientDescent(double [], vector<double*>);
+    double regularization(double *, double);
 
 };
 
