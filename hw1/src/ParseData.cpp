@@ -27,7 +27,8 @@ void ParseData::outFile(char* filePath, map<string, double> predict_pm)
         sprintf(s, "%d", i);
         string tmp(s);
         string id = "id_" + tmp;
-        if(predict_pm[id]<0){
+        if(predict_pm[id]<0)
+        {
             predict_pm[id]=0;
         }
         data_output_file<<id<<","<<predict_pm[id]<<"\n";
@@ -81,11 +82,11 @@ vector<vector<double> >  ParseData::convertDS(map<string, map<string, vector<dou
         for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
         {
             string item = inner_iter->first;
-            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
-            {
-                vector<double> values = inner_iter->second;
-                features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
-            }
+//            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
+//            {
+            vector<double> values = inner_iter->second;
+            features.insert(features.end(), values.begin(), values.end()-1); // don't add the last column value
+//            }
         }
         train_set.push_back(features);
     }
@@ -107,11 +108,11 @@ vector<vector<double> > ParseData::convertDS(map<string, map<string, vector<doub
         for(map<string, vector<double> >::iterator inner_iter = outer_iter->second.begin(); inner_iter != outer_iter->second.end(); ++inner_iter )
         {
             string item = inner_iter->first;
-            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
-            {
-                vector<double> values = inner_iter->second;
-                features.insert(features.end(), values.begin(), values.end()); // add whole elements
-            }
+//            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
+//            {
+            vector<double> values = inner_iter->second;
+            features.insert(features.end(), values.begin(), values.end()); // add whole elements
+//            }
         }
         test_set.push_back(features);
     }

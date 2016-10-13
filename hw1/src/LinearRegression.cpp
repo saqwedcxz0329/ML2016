@@ -33,7 +33,7 @@ void LinearRegression::training(vector<vector<double> > train_set)
         double error_value = lossFunction(train_set, past_gradients);
         cout<<i<<"==="<<error_value<<endl;
         i++;
-        if(error_value < 4000)
+        if(i >= 25000)
         {
             break;
         }
@@ -58,9 +58,7 @@ map<string, double> LinearRegression::testResult(map<string, map<string, vector<
             string item = inner_iter->first;
             vector<double> values = inner_iter->second;
             /***** 1 dimension *****/
-            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED"){
-                features.insert(features.end(), values.begin(), values.end()); // add all column elements
-            }
+            features.insert(features.end(), values.begin()+4, values.end()); // add all column elements
             /***** 2 dimension *****/
 //            if(item != "AMB_TEMP" && item != "RH" && item != "WIND_DIREC" && item!= "WIND_SPEED")
 //            {
@@ -138,14 +136,14 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
 
         for(int i = 0; i < parameters_num; i++)
         {
-            gradients[i] = gradients[i] + (-2)*(y_head - y) * features[i];
+            gradients[i] = gradients[i] + (-2)*(y_head - y) * features[i]; //compute every feature's gradient
         }
 
         error_value = error_value + (y_head - y)*(y_head - y);
     }
 
     /***** regularization *****/
-    double lambda = 0;
+    double lambda = 200;
     if(lambda!=0)
     {
         double sigma_w_square = regularization(gradients, lambda);
@@ -162,22 +160,21 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
 void LinearRegression::gradientDescent(double gradients[], vector<double*> past_gradients)
 {
     int gradients_num = parameters.size();
-    double learning_rate = 0.1;
+    double learning_rate = 1;
     double sigma_past[gradients_num] = {0};
-    int tmp_size = past_gradients.size();
 
     for(int i = 0; i < past_gradients.size(); i++)
     {
         for(int j = 0; j < gradients_num; j++)
         {
-            sigma_past[j] = sigma_past[j] + past_gradients[i][j] * past_gradients[i][j];
+            sigma_past[j] = sigma_past[j] + past_gradients[i][j] * past_gradients[i][j];// Agagrad, compute the past gradient's sum
         }
     }
 
 
     for(int i = 0; i < parameters.size(); i++)
     {
-        parameters[i] = parameters[i] - learning_rate * gradients[i] / sqrt(sigma_past[i]);
+        parameters[i] = parameters[i] - learning_rate * gradients[i] / sqrt(sigma_past[i]);// Adjust the weight
     }
 }
 
@@ -192,15 +189,14 @@ double LinearRegression::regularization(double gradients[], double lambda)
     return sigma_w_square;
 }
 
-
-
 void LinearRegression::initParameters(int feature_num)
 {
     srand(time(NULL));
     double ran;
     for (int i=0; i<feature_num; i++)
     {
-        ran = (((float)rand()/(float)(RAND_MAX)))  * 0.1;
+        ran = (((float)rand()/(float)(RAND_MAX)))  * 0.01;
+//        ran = 0.001;
         parameters.push_back(ran);
     }
 }
