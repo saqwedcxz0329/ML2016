@@ -5,23 +5,25 @@
 #include <vector>
 #include <string>
 #include <stdlib.h>
-#include <time.h>
+#include <ctime>
 #include <math.h>
 
 using namespace std;
 
 class LinearRegression
 {
-    public:
-        LinearRegression();
-        virtual ~LinearRegression();
-        vector<double> training(map<string, map<string, vector<double> > >);
-        map<string, double> testResult(vector<double>,  map<string, map<string, vector<double> > > );
-    private:
-        vector<double> initX(int);
-        double lossFunction(map<string, map<string, vector<double> > > , vector<double>& , vector<vector<double> >& );
-        void gradientDescent(vector<double>&, vector<double>, vector<vector<double> >);
-        double regularization(vector<double>, vector<double>&, double);
+public:
+    LinearRegression(vector<double>);
+    virtual ~LinearRegression();
+    void training(vector<vector<double> >);
+    map<string, double> testResult(map<string, map<string, vector<double> > > );
+private:
+    vector<double> parameters;
+    vector<double> y_heads;
+    void initParameters(int);
+    double lossFunction(vector<vector<double> >, vector<double*> &);
+    void gradientDescent(double [], vector<double*>);
+    double regularization(double *, double);
 
 };
 
