@@ -23,7 +23,7 @@ int main()
     linearregression.training(train_set);
     map<string, double> predict_pm = linearregression.testResult(test_data);
 
-    parsedata.outFile("./data/linear_regression.csv", predict_pm);
+    parsedata.outFile("./linear_regression.csv", predict_pm);
 
     return 0;
 }

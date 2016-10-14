@@ -1,1 +1,1 @@
-g++ -I ./include/ -o ML_HW main_1.cpp ./src/LinearRegression.cpp ./src/ParseData.cpp ; ./ML_HW
+g++ -I ./include/ -o ML_HW_1 main_1.cpp ./src/LinearRegression.cpp ./src/ParseData.cpp ; ./ML_HW_1

@@ -33,7 +33,7 @@ void LinearRegression::training(vector<vector<double> > train_set)
         double error_value = lossFunction(train_set, past_gradients);
         cout<<i<<"==="<<error_value<<endl;
         i++;
-        if(i >= 25000)
+        if(i >= 10000)
         {
             break;
         }
@@ -143,7 +143,7 @@ double LinearRegression::lossFunction(vector<vector<double> > train_set, vector<
     }
 
     /***** regularization *****/
-    double lambda = 200;
+    double lambda = 100;
     if(lambda!=0)
     {
         double sigma_w_square = regularization(gradients, lambda);
