@@ -35,7 +35,7 @@ class logisticRegression(object):
             
     def initWeight(self):
         for i in range(0, self.features_dim, 1):
-            self.weights.append(random.uniform(0,0.1))
+            self.weights.append(random.uniform(0,0.01))
     
     def training(self):
         loss = 0
@@ -71,6 +71,7 @@ class logisticRegression(object):
         return 1 / (1+math.exp(-summation))
     
     def _crossEntropy(self, y, y_head):
+        y = 1 if y > 0.5 else 0
         return (y_head-y) * (y_head-y)
 #        if y == 0 or 1-y == 0:
 #            return 0
@@ -85,7 +86,7 @@ class logisticRegression(object):
             gradients.append(0)
             
     def _gradientDescent(self, gradients):
-        learn_rate = 1
+        learn_rate = 0.1
         sigma_past = []
         self._initList(sigma_past)
         for i in range(len(self.past_gradients)):
