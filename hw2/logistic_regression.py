@@ -106,7 +106,7 @@ if __name__ == '__main__':
         error = LR.training()
         print str(index) + " : " + str(error)
         index += 1
-        if index >= 1500:
+        if error <= 280:
             break
     test_filename = "spam_test.csv"
     LR.parseTestData(test_filename)
