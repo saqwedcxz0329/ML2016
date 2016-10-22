@@ -3,6 +3,7 @@ import sys
 import os
 import random
 import math
+import numpy as np
 
 class logisticRegression(object):
     def __init__(self):
@@ -21,7 +22,9 @@ class logisticRegression(object):
             tmp_train_set.insert(0, 1)
             self.train_set.append(map(float,tmp_train_set))
             self.y_head.append(float(tmp[len(tmp)-1]))
-        self.features_dim = len(self.train_set[0])
+        self.train_set = np.matrix(self.train_set)
+        self.y_head = np.matrix(self.y_head)
+        self.features_dim = self.train_set[0].size
         train_data.close()
     
     def parseTestData(self, filename):
@@ -35,66 +38,55 @@ class logisticRegression(object):
             
     def initWeight(self):
         for i in range(0, self.features_dim, 1):
-            self.weights.append(random.uniform(0,0.01))
+            self.weights.append(random.uniform(0,0.1))
+        self.weights = np.matrix(self.weights)
+#        print self.weights
     
     def training(self):
-        loss = 0
-        gradients = []
-        self._initList(gradients)
-        for i in range(len(self.train_set)):
-            features = self.train_set[i]
-            y = self._computeY(features)
-            self._computeGradients(features, gradients, y, self.y_head[i])
-            loss = loss + self._crossEntropy(y, self.y_head[i])
-        self.past_gradients.append(list(gradients))
+        weights = self.weights
+        x = self.train_set
+        z = weights.dot(x.getT())
+        y_head = self.y_head
+        y = self._sigmoid(z)
+        gradients = (y_head - y).dot(-x) 
+        self.past_gradients.append(gradients)
         self._gradientDescent(gradients)
-        return loss
+        return self._lossFunction(y, y_head)
+    
+    def _gradientDescent(self, gradients):
+        learn_rate = 0.1
+        sigma_past = np.matrix(np.zeros(self.features_dim))
+        for past in self.past_gradients:
+            sigma_past = sigma_past + np.power(past,2)
+            
+        for i in range(self.weights.size):
+            self.weights[0,i] =  self.weights[0,i] - learn_rate * gradients[0,i] / math.sqrt(sigma_past[0,i])
+
+    def _sigmoid(self, z):
+        return 1 / (1+np.exp(-z))
     
     def predict(self):
         predict_file = open("predict.csv", "w")
         predict_file.write("id,label\n")
         for i in range(len(self.test_set)):
-            features = self.test_set[i]
-            y = self._computeY(features)
+            features = np.matrix(self.test_set[i])
+            y = self.weights.dot(features.getT())
             if y > 0.5:
                 predict_file.write(str(i+1) + "," + str(1) + "\n")
             else:
                 predict_file.write(str(i+1) + "," + str(0) + "\n")
-        
     
-    def _computeY(self, features):
+    def _lossFunction(self, y, y_head):
+        for i in range(y.size):
+            if y[0,i] > 0.5:
+                y[0, i] = 1
+            else:
+                y[0, i] = 0
+        loss = np.power((y - y_head), 2)
         summation = 0
-        for i in range(self.features_dim):
-            summation = summation + self.weights[i] * features[i]
-        if summation < 0:
-            return 1 - 1/(1 + math.exp(summation))
-        return 1 / (1+math.exp(-summation))
-    
-    def _crossEntropy(self, y, y_head):
-        y = 1 if y > 0.5 else 0
-        return (y_head-y) * (y_head-y)
-#        if y == 0 or 1-y == 0:
-#            return 0
-#        return -(y_head*math.log(y)+ (1-y_head)*math.log(1-y))
-
-    def _computeGradients(self, features, gradients, y, y_head):
-        for i in range(self.features_dim):
-            gradients[i] = gradients[i] + (-1) * (y_head - y) * features[i]
-    
-    def _initList(self, gradients):
-        for i in range(self.features_dim):
-            gradients.append(0)
-            
-    def _gradientDescent(self, gradients):
-        learn_rate = 0.1
-        sigma_past = []
-        self._initList(sigma_past)
-        for i in range(len(self.past_gradients)):
-            for j in range(self.features_dim):
-                sigma_past[j] = sigma_past[j] + self.past_gradients[i][j] * self.past_gradients[i][j]
-            
-        for i in range(self.features_dim):
-            self.weights[i] =  self.weights[i] - learn_rate * gradients[i] / math.sqrt(sigma_past[i])
+        for i in range(loss.size):
+            summation += loss[0, i]
+        return summation
         
 if __name__ == '__main__':
     LR = logisticRegression()
@@ -111,4 +103,3 @@ if __name__ == '__main__':
     test_filename = "spam_test.csv"
     LR.parseTestData(test_filename)
     LR.predict()
-#output_file = open("ans1.txt", "w")
