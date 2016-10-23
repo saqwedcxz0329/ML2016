@@ -38,9 +38,8 @@ class logisticRegression(object):
             
     def initWeight(self):
         for i in range(0, self.features_dim, 1):
-            self.weights.append(random.uniform(0,0.1))
+            self.weights.append(random.uniform(0,0.01))
         self.weights = np.matrix(self.weights)
-#        print self.weights
     
     def training(self):
         weights = self.weights
@@ -48,7 +47,7 @@ class logisticRegression(object):
         z = weights.dot(x.getT())
         y_head = self.y_head
         y = self._sigmoid(z)
-        gradients = (y_head - y).dot(-x) 
+        gradients = (y - y_head).dot(x) 
         self.past_gradients.append(gradients)
         self._gradientDescent(gradients)
         return self._lossFunction(y, y_head)
@@ -70,7 +69,8 @@ class logisticRegression(object):
         predict_file.write("id,label\n")
         for i in range(len(self.test_set)):
             features = np.matrix(self.test_set[i])
-            y = self.weights.dot(features.getT())
+            z = self.weights.dot(features.getT())
+            y = self._sigmoid(z)
             if y > 0.5:
                 predict_file.write(str(i+1) + "," + str(1) + "\n")
             else:
