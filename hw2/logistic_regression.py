@@ -42,7 +42,7 @@ class logisticRegression(object):
         gradients = (y - y_head).dot(x) 
         self.past_gradients.append(gradients)
         self._gradientDescent(gradients)
-        return self._lossFunction(y, y_head)
+        return self._error(y, y_head)
     
     def _gradientDescent(self, gradients):
         learn_rate = 0.1
@@ -56,16 +56,16 @@ class logisticRegression(object):
     def _sigmoid(self, z):
         return 1 / (1+np.exp(-z))
     
-    def _lossFunction(self, y, y_head):
+    def _error(self, y, y_head):
         for i in range(y.size):
             if y[0,i] > 0.5:
                 y[0, i] = 1
             else:
                 y[0, i] = 0
-        loss = np.power((y - y_head), 2)
+        error = np.power((y - y_head), 2)
         summation = 0
-        for i in range(loss.size):
-            summation += loss[0, i]
+        for i in range(error.size):
+            summation += error[0, i]
         return summation
         
     def output_model(self, model_name):
@@ -86,6 +86,3 @@ if __name__ == '__main__':
         if error <= 280:
             break
     LR.output_model(model_name)
-#    test_filename = "spam_test.csv"
-#    LR.parseTestData(test_filename)
-#    LR.predict()
