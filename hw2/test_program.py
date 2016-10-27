@@ -33,7 +33,6 @@ class test_program(object):
         return 1 / (1+np.exp(-z))
 
     def load_model(self, model_name):
-        self.weights = cPickle.load(open(model_name, "r"))
         print self.weights
 
 if __name__ == '__main__':

@@ -28,15 +28,6 @@ class logisticRegression(object):
         self.features_dim = self.train_set[0].size
         train_data.close()
     
-    def parseTestData(self, filename):
-        test_data = open(os.getcwd() + "/%s" %filename, "r")
-        for line in test_data.readlines():
-            tmp = line.split(",")
-            tmp_test_set = tmp[1:len(tmp)]
-            tmp_test_set.insert(0, 1)
-            self.test_set.append(map(float,tmp_test_set))
-        test_data.close()
-            
     def initWeight(self):
         for i in range(0, self.features_dim, 1):
             self.weights.append(random.uniform(0,0.01))
@@ -65,18 +56,6 @@ class logisticRegression(object):
     def _sigmoid(self, z):
         return 1 / (1+np.exp(-z))
     
-    def predict(self):
-        predict_file = open("predict.csv", "w")
-        predict_file.write("id,label\n")
-        for i in range(len(self.test_set)):
-            features = np.matrix(self.test_set[i])
-            z = self.weights.dot(features.getT())
-            y = self._sigmoid(z)
-            if y > 0.5:
-                predict_file.write(str(i+1) + "," + str(1) + "\n")
-            else:
-                predict_file.write(str(i+1) + "," + str(0) + "\n")
-    
     def _lossFunction(self, y, y_head):
         for i in range(y.size):
             if y[0,i] > 0.5:
@@ -97,7 +76,6 @@ if __name__ == '__main__':
     model_name = sys.argv[2]
 
     LR = logisticRegression()
-    #train_filename = "spam_train.csv"
     LR.parseData(train_filename)
     LR.initWeight()
     index = 1
