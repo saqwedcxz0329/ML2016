@@ -3,6 +3,7 @@ import sys
 import os
 import math
 import numpy as np
+import cPickle
 
 class logisticRegression(object):
     def __init__(self):
@@ -75,18 +76,23 @@ class logisticRegression(object):
         for x in self.test_set:
             x = np.matrix(x).getT()
             z = wT.dot(x) + b
-            probability =  1 / (1 + math.exp(-z))
+            probability =  1 / (1 + np.exp(-z))
             if probability > 0.5:
                 predict_file.write(str(index) + "," + str(1) + "\n")
             else:
                 predict_file.write(str(index) + "," + str(0) + "\n")
             index += 1
             
+    def output_model(self, model_name):
+        cPickle.dump((self.u1, self.u0, self.sigma, self.N1, self.N0), open(model_name, "w"))
+            
 if __name__ == '__main__':
+    train_filename = sys.argv[1]
+    model_name = sys.argv[2]
     LR = logisticRegression()
-    train_filename = "spam_train.csv"
     LR.parseData(train_filename)
     LR.train()
-    test_filename = "spam_test.csv"
-    LR.parseTestData(test_filename)
-    LR.predict()
+    LR.output_model(model_name)
+#    test_filename = "spam_test.csv"
+#    LR.parseTestData(test_filename)
+#    LR.predict()

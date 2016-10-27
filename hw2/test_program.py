@@ -6,35 +6,41 @@ import cPickle
 class test_program(object):
     def __init__(self):
 	self.test_set = []
-	self.weights = []
 
     def parseTestData(self, filename):
-	test_data = open(os.getcwd() + "/%s" %filename, "r")
-	for line in test_data.readlines():
-		tmp = line.split(",")
-		tmp_test_set = tmp[1:len(tmp)]
-		tmp_test_set.insert(0, 1)
-		self.test_set.append(map(float,tmp_test_set))
-	test_data.close()
+        test_data = open(os.getcwd() + "/%s" %filename, "r")
+        for line in test_data.readlines():
+            tmp = line.split(",")
+            tmp_test_set = tmp[1:len(tmp)]
+            self.test_set.append(map(float,tmp_test_set))
+        test_data.close()
  
     def predict(self, output_file):
         predict_file = open(output_file, "w")
         predict_file.write("id,label\n")
-        for i in range(len(self.test_set)):
-            features = np.matrix(self.test_set[i])
-            z = self.weights.dot(features.getT())
-            y = self._sigmoid(z)
-            if y > 0.5:
-                predict_file.write(str(i+1) + "," + str(1) + "\n")
+        wT = self._computeWT()
+        b = self._computeB()
+        index = 1
+        for x in self.test_set:
+            x = np.matrix(x).getT()
+            z = wT.dot(x) + b
+            probability =  1 / (1 + np.exp(-z))
+            if probability > 0.5:
+                predict_file.write(str(index) + "," + str(1) + "\n")
             else:
-                predict_file.write(str(i+1) + "," + str(0) + "\n")
-
-    def _sigmoid(self, z):
-        return 1 / (1+np.exp(-z))
+                predict_file.write(str(index) + "," + str(0) + "\n")
+            index += 1
+            
+    def _computeWT(self):
+        return ((self.u1 - self.u0).getT()).dot(self.sigma.getI())
+    
+    def _computeB(self):
+        sigma_inverse = self.sigma.getI()
+        return -0.5*((self.u1.getT()).dot(sigma_inverse).dot(self.u1)) + 0.5*((self.u0.getT()).dot(sigma_inverse).dot(self.u0)) + math.log(self.N1/self.N0)
+    
 
     def load_model(self, model_name):
-        self.weights = cPickle.load(open(model_name, "r"))
-        print self.weights
+        self.u1, self.u0, self.sigma, self.N1, self.N0 = cPickle.load(open(model_name, "r"))
 
 if __name__ == '__main__':
     model_name = sys.argv[1]
