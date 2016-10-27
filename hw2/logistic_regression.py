@@ -4,6 +4,7 @@ import os
 import random
 import math
 import numpy as np
+import cPickle
 
 class logisticRegression(object):
     def __init__(self):
@@ -88,9 +89,15 @@ class logisticRegression(object):
             summation += loss[0, i]
         return summation
         
+    def output_model(self, model_name):
+        cPickle.dump(self.weights, open(model_name, "w"))
+        
 if __name__ == '__main__':
+    train_filename = sys.argv[1]
+    model_name = sys.argv[2]
+
     LR = logisticRegression()
-    train_filename = "spam_train.csv"
+    #train_filename = "spam_train.csv"
     LR.parseData(train_filename)
     LR.initWeight()
     index = 1
@@ -100,6 +107,7 @@ if __name__ == '__main__':
         index += 1
         if error <= 280:
             break
-    test_filename = "spam_test.csv"
-    LR.parseTestData(test_filename)
-    LR.predict()
+    LR.output_model(model_name)
+#    test_filename = "spam_test.csv"
+#    LR.parseTestData(test_filename)
+#    LR.predict()
