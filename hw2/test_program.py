@@ -36,7 +36,7 @@ class test_program(object):
     
     def _computeB(self):
         sigma_inverse = self.sigma.getI()
-        return -0.5*((self.u1.getT()).dot(sigma_inverse).dot(self.u1)) + 0.5*((self.u0.getT()).dot(sigma_inverse).dot(self.u0)) + math.log(self.N1/self.N0)
+        return -0.5*((self.u1.getT()).dot(sigma_inverse).dot(self.u1)) + 0.5*((self.u0.getT()).dot(sigma_inverse).dot(self.u0)) + np.log(self.N1/self.N0)
     
 
     def load_model(self, model_name):
