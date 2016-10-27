@@ -28,14 +28,6 @@ class logisticRegression(object):
         self.features_dim = len(self.class1[0])
         train_data.close()
     
-    def parseTestData(self, filename):
-        test_data = open(os.getcwd() + "/%s" %filename, "r")
-        for line in test_data.readlines():
-            tmp = line.split(",")
-            tmp_test_set = tmp[1:len(tmp)]
-            self.test_set.append(map(float,tmp_test_set))
-        test_data.close()
-    
     def _computeMu(self, class_name):
         mu = np.matrix(np.zeros(self.features_dim))
         for x in class_name:
@@ -59,29 +51,6 @@ class logisticRegression(object):
         sigma0 = self._computeSigma(self.class0, self.u0)
         total = self.N0 + self.N1
         self.sigma = (self.N1/total) * sigma1 + (self.N0/total) * sigma0
-    
-    def _computeWT(self):
-        return ((self.u1 - self.u0).getT()).dot(self.sigma.getI())
-    
-    def _computeB(self):
-        sigma_inverse = self.sigma.getI()
-        return -0.5*((self.u1.getT()).dot(sigma_inverse).dot(self.u1)) + 0.5*((self.u0.getT()).dot(sigma_inverse).dot(self.u0)) + math.log(self.N1/self.N0)
-    
-    def predict(self):
-        predict_file = open("predict.csv", "w")
-        predict_file.write("id,label\n")
-        wT = self._computeWT()
-        b = self._computeB()
-        index = 1
-        for x in self.test_set:
-            x = np.matrix(x).getT()
-            z = wT.dot(x) + b
-            probability =  1 / (1 + np.exp(-z))
-            if probability > 0.5:
-                predict_file.write(str(index) + "," + str(1) + "\n")
-            else:
-                predict_file.write(str(index) + "," + str(0) + "\n")
-            index += 1
             
     def output_model(self, model_name):
         cPickle.dump((self.u1, self.u0, self.sigma, self.N1, self.N0), open(model_name, "w"))
@@ -93,6 +62,3 @@ if __name__ == '__main__':
     LR.parseData(train_filename)
     LR.train()
     LR.output_model(model_name)
-#    test_filename = "spam_test.csv"
-#    LR.parseTestData(test_filename)
-#    LR.predict()
