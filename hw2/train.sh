@@ -1,1 +1,1 @@
-python logistic_regression.py spam_train.csv model
+python logistic_regression.py $1 $2
