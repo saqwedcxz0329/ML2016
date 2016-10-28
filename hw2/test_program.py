@@ -33,7 +33,7 @@ class test_program(object):
         return 1 / (1+np.exp(-z))
 
     def load_model(self, model_name):
-        print self.weights
+        self.weights = cPickle.load(open(model_name, "r"))
 
 if __name__ == '__main__':
     model_name = sys.argv[1]
