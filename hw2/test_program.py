@@ -39,7 +39,6 @@ if __name__ == '__main__':
     model_name = sys.argv[1]
     test_file = sys.argv[2]
     output_file = sys.argv[3]
-
     TP = test_program()
     TP.load_model(model_name)
     TP.parseTestData(test_file)
