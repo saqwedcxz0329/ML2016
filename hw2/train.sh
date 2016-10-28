@@ -1,1 +1,1 @@
-python distribution.py spam_train.csv model
+python distribution.py $1 $2

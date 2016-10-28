@@ -32,10 +32,17 @@ class test_program(object):
             index += 1
             
     def _computeWT(self):
-        return ((self.u1 - self.u0).getT()).dot(self.sigma.getI())
+        try:
+            sigma_inverse = self.sigma.getI()
+        except:
+            sigma_inverse = np.linalg.pinv(self.sigma)
+        return ((self.u1 - self.u0).getT()).dot(sigma_inverse)
     
     def _computeB(self):
-        sigma_inverse = self.sigma.getI()
+        try:
+            sigma_inverse = self.sigma.getI()
+        except:
+            sigma_inverse = np.linalg.pinv(self.sigma)
         return -0.5*((self.u1.getT()).dot(sigma_inverse).dot(self.u1)) + 0.5*((self.u0.getT()).dot(sigma_inverse).dot(self.u0)) + np.log(self.N1/self.N0)
     
 
