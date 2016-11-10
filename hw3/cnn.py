@@ -58,12 +58,12 @@ class CNN(object):
         model.add(Convolution2D(50, 3, 3))
         model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
-        #model.add(Dropout(0.25))
+        model.add(Dropout(0.25))
         for i in range(10):
             #model.add(Dropout(0.25))
             model.add(Dense(100))
             model.add(Activation("relu"))
-        #model.add(Dropout(0.25))
+        model.add(Dropout(0.25))
         model.add(Dense(self.class_num))
         model.add(Activation('softmax'))
         #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=False)
@@ -103,12 +103,12 @@ if __name__ == '__main__':
     unlabel_data_path = '../../data/all_unlabel.p'
     test_data_path = '../../data/test.p'
 
-    X_unlabel = cnn.parseUnlabelData(unlabel_data_path)
     X_label, Y_label = cnn.parseLabelData(label_data_path)
+    X_unlabel = cnn.parseUnlabelData(unlabel_data_path)
+    X_test = cnn.parseTestData(test_data_path)
     model = cnn.constructCNN(X_label, Y_label)
-    print "======================================================="
-    
 
+    print "Self-training..."
     label_flag = np.zeros(X_unlabel.shape[0])
     for i in range(5):
         print np.count_nonzero(label_flag)
@@ -119,5 +119,4 @@ if __name__ == '__main__':
         Y_label = np.concatenate((Y_label, Y_unlabel), axis=0)
         model = cnn.constructCNN(X_label, Y_label)
 
-    X_test = cnn.parseTestData(test_data_path)
     cnn.predict(model, X_test)
