@@ -77,7 +77,7 @@ class CNN(object):
         output = model.predict(X_unlabel, batch_size=128)
         X_selftrain = []
         Y_unlabel = []
-        for i in range(output.shape[0]):
+        for i in np.where(label_flag==0)[0]:
             value = np.amax(output[i])
             if value > 0.8 and label_flag[i] == 0:
                 X_selftrain.append(X_unlabel[i])
