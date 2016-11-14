@@ -55,20 +55,20 @@ class CNN(object):
         model = Sequential()
         model.add(Convolution2D(25, 3, 3, input_shape=(3, self.width, self.height)))
         model.add(MaxPooling2D((2, 2)))
-        model.add(Convolution2D(50, 3, 3))
+        #model.add(Convolution2D(64, 3, 3))
+        #model.add(MaxPooling2D((2, 2)))
+        model.add(Convolution2D(75, 3, 3))
         model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
-        model.add(Dropout(0.25))
-        for i in range(10):
-            #model.add(Dropout(0.25))
-            model.add(Dense(100))
+        model.add(Dropout(0.3))
+        for i in range(15):
+            model.add(Dense(110))
             model.add(Activation("relu"))
-        model.add(Dropout(0.25))
+        model.add(Dropout(0.3))
         model.add(Dense(self.class_num))
         model.add(Activation('softmax'))
-        #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=False)
         model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-        model.fit(X_train, Y_train, nb_epoch=45, batch_size=128)
+        model.fit(X_train, Y_train, nb_epoch=50, batch_size=128)
         return model
 
     def addUnlabelData(self, model, X_unlabel, label_flag):
@@ -79,7 +79,7 @@ class CNN(object):
         Y_unlabel = []
         for i in np.where(label_flag==0)[0]:
             value = np.amax(output[i])
-            if value > 0.8 and label_flag[i] == 0:
+            if value > 0.9 and label_flag[i] == 0:
                 X_selftrain.append(X_unlabel[i])
                 Y_unlabel.append(np.argmax(output[i]))
                 label_flag[i] = 1
@@ -106,11 +106,14 @@ if __name__ == '__main__':
     X_label, Y_label = cnn.parseLabelData(label_data_path)
     X_unlabel = cnn.parseUnlabelData(unlabel_data_path)
     X_test = cnn.parseTestData(test_data_path)
+    X_label /= 255
+    X_unlabel /= 255
+    X_test /= 255
+    X_unlabel = np.concatenate((X_unlabel, X_test), axis=0)
     model = cnn.constructCNN(X_label, Y_label)
-
     print "Self-training..."
     label_flag = np.zeros(X_unlabel.shape[0])
-    for i in range(5):
+    for i in range(10):
         print np.count_nonzero(label_flag)
         if np.count_nonzero(label_flag) >= X_unlabel.shape[0]:
             break
@@ -120,3 +123,4 @@ if __name__ == '__main__':
         model = cnn.constructCNN(X_label, Y_label)
 
     cnn.predict(model, X_test)
+    
