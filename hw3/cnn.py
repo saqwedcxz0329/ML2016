@@ -36,13 +36,16 @@ class AutoEncoder(object):
     def clustering(self, encoder, X_train, Y_train):
         print "Clustering..."
         encoded_imgs = encoder.predict(X_train)
-        for i in range(5000, 10000): # X_train.shape[0]
+        for i in range(5000, X_train.shape[0]):
             min_distance = sys.maxint
             for j in range(10):
+                # Find the datas belong to class j
                 class_index = np.where(Y_train == j)[0]
+                # Compute the cluster's centroid
                 centroid = np.mean(encoded_imgs[class_index], axis=0)
+                # Find the closest cluster
                 euclidean_distance = np.linalg.norm(encoded_imgs[i] - centroid)
-                if euclidean_distance < min_distance:    
+                if euclidean_distance < min_distance:
                     min_distance = euclidean_distance
                     Y_train[i] = j
             print i
@@ -68,7 +71,6 @@ class Data(object):
                 
         X_label = np.array(X_label, dtype='float32')
         Y_label = np.array(Y_label, dtype='uint8')
-        #Y_label = np_utils.to_categorical(Y_label, self.class_num)
         return X_label/255., Y_label
 
     def parseUnlabelData(self, path):
@@ -92,7 +94,6 @@ class Data(object):
         return X_test/255.
 
 class CNN(object):
-    """docstring for CNN"""
     def __init__(self, channel, width, height, class_num):
         self.channel = channel
         self.width = width
@@ -106,7 +107,7 @@ class CNN(object):
         model.add(MaxPooling2D((2, 2)))
         #model.add(Convolution2D(64, 3, 3))
         #model.add(MaxPooling2D((2, 2)))
-        model.add(Convolution2D(75, 3, 3))
+        model.add(Convolution2D(50, 3, 3))
         model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
         #model.add(Dropout(0.3))
@@ -117,23 +118,6 @@ class CNN(object):
         model.add(Dense(self.class_num))
         model.add(Activation('softmax'))
         return model
-
-    def addUnlabelData(self, model, X_unlabel, label_flag):
-        print ("Adding unlabel data...")
-        gc.collect()
-        output = model.predict(X_unlabel, batch_size=128)
-        X_selftrain = []
-        Y_unlabel = []
-        for i in np.where(label_flag==0)[0]:
-            value = np.amax(output[i])
-            if value > 0.9 and label_flag[i] == 0:
-                X_selftrain.append(X_unlabel[i])
-                Y_unlabel.append(np.argmax(output[i]))
-                label_flag[i] = 1
-        X_selftrain = np.array(X_selftrain, dtype='float32')
-        Y_unlabel = np.array(Y_unlabel, dtype='uint8')
-        Y_unlabel = np_utils.to_categorical(Y_unlabel, self.class_num)
-        return X_selftrain, Y_unlabel, label_flag
 
     def predict(self, model, X_test):
         print ("Predicting...")
@@ -153,42 +137,55 @@ if __name__ == '__main__':
     unlabel_data_path = '../../data/all_unlabel.p'
     test_data_path = '../../data/test.p'
 
-    data = Data(channel, width, height, class_num)
-    cnn = CNN(channel, width, height, class_num)
+    data = Data(channel, width, height, class_num) #(channel, width, heigth, class_num)
+    cnn = CNN(channel, width, height, class_num)   #(channel, width, heigth, class_num)
+    ## Read data
     X_label, Y_label = data.parseLabelData(label_data_path)
     X_unlabel = data.parseUnlabelData(unlabel_data_path)
     X_test = data.parseTestData(test_data_path)
-    X_unlabel = np.concatenate((X_unlabel, X_test), axis=0)
+   
+    X_unlabel = X_unlabel[0:40000]
+    ## Concatenate date
+    #X_unlabel = np.concatenate((X_unlabel, X_test), axis=0)
     X_train = np.concatenate((X_label, X_unlabel), axis=0)
     Y_unlabel = np.empty(X_unlabel.shape[0])
     Y_unlabel.fill(-1)
     Y_train = np.concatenate((Y_label, Y_unlabel), axis=0)
     
-    ############ Autoencoder
+    ############ Autoencoder ############
     print ("Start to train autoencoder")
-    # Add noisy
     X_train = X_train.reshape((len(X_train), np.prod(X_train.shape[1:])))
-    #noise_factor = 0.5
-    #X_train = X_train + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=X_train.shape) 
-    #X_train = np.clip(X_train, 0., 1.)
+    ## Add noisy
+    noise_factor = 0.5
+    #X_train = X_train + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=X_train.shape[1])
+    #X_train = X_train + 0.1
+    for i in range(X_train.shape[0]):
+        #print X_train.shape[1]
+        #print X_train[i].shape
+        X_train[i] = X_train[i] + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=X_train.shape[1])
+    
+    X_train = np.clip(X_train, 0., 1.)
+    X_train.astype('float32')
     print (X_train.shape)
     print (Y_train.shape)
-
-    # Training
-    ae = AutoEncoder(3,32,32,10)
+     
+    gc.collect()
+    ## Training
+    ae = AutoEncoder(3,32,32,10) #(channel, width, heigth, class_num)
     autoencoder, encoder = ae.autoencoder_model()
-    autoencoder.compile(optimizer='adam', loss='mse')
+    autoencoder.compile(optimizer='adadelta', loss='binary_crossentropy')
     autoencoder.fit(X_train, X_train,
-                    nb_epoch=1,
-                    batch_size=256,
+                    nb_epoch=75,
+                    batch_size=128,
                     shuffle=True)
-    # Clustering
+    ## Clustering
     Y_train = ae.clustering(encoder, X_train, Y_train)
     Y_train = np_utils.to_categorical(Y_train, 10)
 
-    X_train = X_train[0:10000]
-    Y_train = Y_train[0:10000]
-    ############ Train CNN
+    #X_train = X_train[0:10000]
+    #Y_train = Y_train[0:10000]
+
+    ############ Train CNN ############
     print ("Start to train cnn...")
     X_train = X_train.reshape((len(X_train), channel, width, height))
     print X_train.shape
@@ -197,18 +194,4 @@ if __name__ == '__main__':
     model = cnn.cnn_model()
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     model.fit(X_train, Y_train, nb_epoch=50, batch_size=128)
-
-    """
-    print "Self-training..."
-    label_flag = np.zeros(X_unlabel.shape[0])
-    for i in range(10):
-        print np.count_nonzero(label_flag)
-        if np.count_nonzero(label_flag) >= X_unlabel.shape[0]:
-            break
-        X_selftrain, Y_unlabel, label_flag = cnn.addUnlabelData(model, X_unlabel, label_flag)
-        X_label = np.concatenate((X_label, X_selftrain), axis=0)
-        Y_label = np.concatenate((Y_label, Y_unlabel), axis=0)
-        model = cnn.constructCNN(X_label, Y_label)
-    """
-
     cnn.predict(model, X_test)
