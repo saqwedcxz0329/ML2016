@@ -7,6 +7,7 @@ from keras.optimizers import SGD
 import numpy as np
 import cPickle
 import gc
+import sys
 
 class AutoEncoder(object):
     def __init__(self, channel, width, height, class_num):
@@ -32,6 +33,21 @@ class AutoEncoder(object):
         encoder = Model(input=input_img, output=encoded)
         return autoencoder, encoder
 
+    def clustering(self, encoder, X_train, Y_train):
+        print "Clustering..."
+        encoded_imgs = encoder.predict(X_train)
+        for i in range(5000, 10000): # X_train.shape[0]
+            min_distance = sys.maxint
+            for j in range(10):
+                class_index = np.where(Y_train == j)[0]
+                centroid = np.mean(encoded_imgs[class_index], axis=0)
+                euclidean_distance = np.linalg.norm(encoded_imgs[i] - centroid)
+                if euclidean_distance < min_distance:    
+                    min_distance = euclidean_distance
+                    Y_train[i] = j
+            print i
+        return Y_train
+
 class Data(object):
     def __init__(self, channel, width, height, class_num):
         self.channel = channel
@@ -52,7 +68,7 @@ class Data(object):
                 
         X_label = np.array(X_label, dtype='float32')
         Y_label = np.array(Y_label, dtype='uint8')
-        Y_label = np_utils.to_categorical(Y_label, self.class_num)
+        #Y_label = np_utils.to_categorical(Y_label, self.class_num)
         return X_label/255., Y_label
 
     def parseUnlabelData(self, path):
@@ -95,7 +111,7 @@ class CNN(object):
         model.add(Flatten())
         #model.add(Dropout(0.3))
         for i in range(15):
-            model.add(Dense(110))
+            model.add(Dense(100))
             model.add(Activation("relu"))
         #model.add(Dropout(0.3))
         model.add(Dense(self.class_num))
@@ -144,39 +160,45 @@ if __name__ == '__main__':
     X_test = data.parseTestData(test_data_path)
     X_unlabel = np.concatenate((X_unlabel, X_test), axis=0)
     X_train = np.concatenate((X_label, X_unlabel), axis=0)
-    #Y_train = np.concatenate((Y_label, np.empty(X_unlabel.shape[0])), axix=0)
+    Y_unlabel = np.empty(X_unlabel.shape[0])
+    Y_unlabel.fill(-1)
+    Y_train = np.concatenate((Y_label, Y_unlabel), axis=0)
+    
     ############ Autoencoder
     print ("Start to train autoencoder")
     # Add noisy
     X_train = X_train.reshape((len(X_train), np.prod(X_train.shape[1:])))
-    X_label = X_label.reshape((len(X_label), np.prod(X_label.shape[1:])))
     #noise_factor = 0.5
     #X_train = X_train + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=X_train.shape) 
     #X_train = np.clip(X_train, 0., 1.)
     print (X_train.shape)
+    print (Y_train.shape)
 
     # Training
     ae = AutoEncoder(3,32,32,10)
     autoencoder, encoder = ae.autoencoder_model()
     autoencoder.compile(optimizer='adam', loss='mse')
     autoencoder.fit(X_train, X_train,
-                    nb_epoch=50,
-                    batch_size=128,
+                    nb_epoch=1,
+                    batch_size=256,
                     shuffle=True)
+    # Clustering
+    Y_train = ae.clustering(encoder, X_train, Y_train)
+    Y_train = np_utils.to_categorical(Y_train, 10)
 
-    encoded_imgs = encoder.predict(X_train)
-    #Y_train = ae.clustering(encoder, X_train, Y_train)
-
-    """
+    X_train = X_train[0:10000]
+    Y_train = Y_train[0:10000]
     ############ Train CNN
     print ("Start to train cnn...")
     X_train = X_train.reshape((len(X_train), channel, width, height))
     print X_train.shape
+    print Y_train.shape
 
     model = cnn.cnn_model()
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(X_label, Y_label, nb_epoch=50, batch_size=128)
-    
+    model.fit(X_train, Y_train, nb_epoch=50, batch_size=128)
+
+    """
     print "Self-training..."
     label_flag = np.zeros(X_unlabel.shape[0])
     for i in range(10):
@@ -187,6 +209,6 @@ if __name__ == '__main__':
         X_label = np.concatenate((X_label, X_selftrain), axis=0)
         Y_label = np.concatenate((Y_label, Y_unlabel), axis=0)
         model = cnn.constructCNN(X_label, Y_label)
+    """
 
     cnn.predict(model, X_test)
-    """
