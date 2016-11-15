@@ -6,23 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cPickle
 
-def parseLabelData(path):
-        print "Parsing label data..."
-        all_label = cPickle.load(open(path, 'rb'))
-        X_train = []
-        Y_train = []
-        for i in range(len(all_label)):
-            for j in range(len(all_label[i])):
-                img = np.array(all_label[i][j], dtype='float32')
-                X_train.append(img.reshape(3, 32, 32))
-                Y_train.append(i)
-                
-        X_train = np.array(X_train, dtype='float32')
-        Y_train = np.array(Y_train, dtype='uint8')
-        Y_train = np_utils.to_categorical(Y_train, 10)
-        return X_train, Y_train
-
-
 class AutoEncoder(object):
     def __init__(self, channel, width, height, class_num):
         self.channel = channel
@@ -76,10 +59,9 @@ if __name__ == '__main__':
     #encoded_imgs = encoder.predict(x_test)
 
     encoded_input = Input(shape=(256,))
+
     decoder_layer = autoencoder.layers[-3]
     decoder = Model(input=encoded_input, output=decoder_layer(encoded_input))
-    # encode and decode some digits
-    # note that we take them from the *test* set
     encoded_imgs = encoder.predict(x_test)
     decoded_imgs = decoder.predict(encoded_imgs)
 
