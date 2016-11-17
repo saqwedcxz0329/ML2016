@@ -5,7 +5,7 @@ import cPickle
 
 class test_program(object):
     def __init__(self):
-	self.test_set = []
+        self.test_set = []
 
     def parseTestData(self, filename):
         test_data = open(os.getcwd() + "/%s" %filename, "r")
