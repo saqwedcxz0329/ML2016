@@ -101,7 +101,7 @@ class CNN(object):
     def cnn_model(self):
         print ("Start to train CNN...")
         model = Sequential()
-        model.add(Convolution2D(25, 3, 3, input_shape=(self.channel, self.width, self.height)))
+        model.add(Convolution2D(16, 3, 3, input_shape=(self.channel, self.width, self.height)))
         model.add(MaxPooling2D((2, 2)))
         model.add(Convolution2D(64, 3, 3))
         model.add(MaxPooling2D((2, 2)))
