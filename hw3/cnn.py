@@ -58,18 +58,18 @@ class CNN(object):
     def cnn_model(self):
         print "Start to train CNN..."
         model = Sequential()
-        model.add(Convolution2D(25, 3, 3, input_shape=(3, self.width, self.height)))
+        model.add(Convolution2D(16, 3, 3, input_shape=(3, self.width, self.height)))
         model.add(MaxPooling2D((2, 2)))
-        #model.add(Convolution2D(64, 3, 3))
-        #model.add(MaxPooling2D((2, 2)))
         model.add(Convolution2D(64, 3, 3))
         model.add(MaxPooling2D((2, 2)))
+        #model.add(Convolution2D(75, 3, 3))
+        #model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
-        model.add(Dropout(0.3))
-        for i in range(15):
+        model.add(Dropout(0.25))
+        for i in range(10):
             model.add(Dense(100))
             model.add(Activation("relu"))
-        model.add(Dropout(0.3))
+        model.add(Dropout(0.25))
         model.add(Dense(self.class_num))
         model.add(Activation('softmax'))
         return model
@@ -82,7 +82,7 @@ class CNN(object):
         Y_unlabel = []
         for i in np.where(label_flag==0)[0]:
             value = np.amax(output[i])
-            if value > 0.9 and label_flag[i] == 0:
+            if value > 0.85 and label_flag[i] == 0:
                 X_selftrain.append(X_unlabel[i])
                 Y_unlabel.append(np.argmax(output[i]))
                 label_flag[i] = 1
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 
     print "Self-training..."
     label_flag = np.zeros(X_unlabel.shape[0])
-    for i in range(5):
+    for i in range(10):
         print np.count_nonzero(label_flag)
         if np.count_nonzero(label_flag) >= X_unlabel.shape[0]:
             break
@@ -138,6 +138,6 @@ if __name__ == '__main__':
             X_label = np.concatenate((X_label, X_selftrain), axis=0)
             Y_label = np.concatenate((Y_label, Y_unlabel), axis=0)
             model.fit(X_label, Y_label, nb_epoch=15, batch_size=128)
-    
+
     model.save(model_name)  # creates a HDF5 file 'my_model.h5'
     
