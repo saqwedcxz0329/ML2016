@@ -108,23 +108,14 @@ class CNN(object):
         model.add(Convolution2D(64, 3, 3))
         model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
-        model.add(Dropout(0.25))
-        for i in range(10):
+        model.add(Dropout(0.3))
+        for i in range(15):
             model.add(Dense(100))
             model.add(Activation("relu"))
-        model.add(Dropout(0.25))
+        model.add(Dropout(0.3))
         model.add(Dense(self.class_num))
         model.add(Activation('softmax'))
         return model
-
-    def predict(self, model, X_test):
-        print ("Predicting...")
-        predict_file = open("predict.csv", "w")
-        predict_file.write("ID,class\n")
-        output = model.predict(X_test, batch_size=128)
-        for i in range(output.shape[0]):
-            predict_file.write(str(i) + "," + str(np.argmax(output[i])) + "\n")
-
 
 if __name__ == '__main__':
     data_directory = sys.argv[1]
@@ -155,8 +146,9 @@ if __name__ == '__main__':
     print ("Start to train autoencoder")
     X_train = X_train.reshape((len(X_train), np.prod(X_train.shape[1:])))
     ## Add noisy
+	"""
     noise_factor = 0.5
-    """
+    
     for i in range(X_train.shape[0]):
         #print X_train.shape[1]
         #print X_train[i].shape
