@@ -22,14 +22,12 @@ class AutoEncoder(object):
         encoding_dim = 128
         input_img = Input(shape=(input_dim,))
 
-        #encoded = Dense(1024, activation='relu')(input_img)
         encoded = Dense(512, activation='relu')(input_img)
         encoded = Dense(256, activation='relu')(input_img)
         encoded = Dense(encoding_dim, activation='relu')(encoded)
 
         decoded = Dense(256, activation='relu')(encoded)
         decoded = Dense(512, activation='relu')(encoded)
-        #decoded = Dense(1024, activation='relu')(decoded)
         decoded = Dense(input_dim, activation='sigmoid')(decoded)
 
         autoencoder = Model(input=input_img, output=decoded)
@@ -108,11 +106,11 @@ class CNN(object):
         model.add(Convolution2D(64, 3, 3))
         model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
-        model.add(Dropout(0.3))
-        for i in range(15):
+        model.add(Dropout(0.25))
+        for i in range(10):
             model.add(Dense(100))
             model.add(Activation("relu"))
-        model.add(Dropout(0.3))
+        model.add(Dropout(0.25))
         model.add(Dense(self.class_num))
         model.add(Activation('softmax'))
         return model
@@ -136,7 +134,6 @@ if __name__ == '__main__':
     X_test = data.parseTestData(test_data_path)
     
     ## Concatenate date
-    #X_unlabel = np.concatenate((X_unlabel, X_test), axis=0)
     X_train = np.concatenate((X_label, X_unlabel), axis=0)
     Y_unlabel = np.empty(X_unlabel.shape[0])
     Y_unlabel.fill(-1)
@@ -152,7 +149,6 @@ if __name__ == '__main__':
     print (X_train.shape)
     print (Y_train.shape)
      
-    #gc.collect()
     ## Training
     ae = AutoEncoder(3,32,32,10) #(channel, width, height, class_num)
     autoencoder, encoder = ae.autoencoder_model()
