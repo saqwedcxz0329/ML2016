@@ -145,15 +145,7 @@ if __name__ == '__main__':
     ############ Autoencoder ############
     print ("Start to train autoencoder")
     X_train = X_train.reshape((len(X_train), np.prod(X_train.shape[1:])))
-    ## Add noisy
-	"""
-    noise_factor = 0.5
     
-    for i in range(X_train.shape[0]):
-        #print X_train.shape[1]
-        #print X_train[i].shape
-        X_train[i] = X_train[i] + noise_factor * np.random.normal(loc=0.0, scale=1.0, size=X_train.shape[1:])
-    """
     X_train = np.clip(X_train, 0., 1.)
     X_train.astype('float32')
     Y_train.astype('uint8')
