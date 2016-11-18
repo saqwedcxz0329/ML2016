@@ -60,8 +60,6 @@ class CNN(object):
         model = Sequential()
         model.add(Convolution2D(25, 3, 3, input_shape=(3, self.width, self.height)))
         model.add(MaxPooling2D((2, 2)))
-        #model.add(Convolution2D(64, 3, 3))
-        #model.add(MaxPooling2D((2, 2)))
         model.add(Convolution2D(64, 3, 3))
         model.add(MaxPooling2D((2, 2)))
         model.add(Flatten())
@@ -91,15 +89,6 @@ class CNN(object):
         Y_unlabel = np_utils.to_categorical(Y_unlabel, self.class_num)
         del output
         return X_selftrain, Y_unlabel, label_flag
-
-    def predict(self, model, X_test):
-        print "Predicting..."
-        predict_file = open("predict.csv", "w")
-        predict_file.write("ID,class\n")
-        output = model.predict(X_test, batch_size=128)
-        for i in range(output.shape[0]):
-            predict_file.write(str(i) + "," + str(np.argmax(output[i])) + "\n")
-
 
 if __name__ == '__main__':
     data_directory = sys.argv[1]
@@ -137,7 +126,7 @@ if __name__ == '__main__':
         if X_selftrain.shape[0] != 0 :
             X_label = np.concatenate((X_label, X_selftrain), axis=0)
             Y_label = np.concatenate((Y_label, Y_unlabel), axis=0)
-            model.fit(X_label, Y_label, nb_epoch=15, batch_size=128)
+        model.fit(X_label, Y_label, nb_epoch=15, batch_size=128)
     
     model.save(model_name)  # creates a HDF5 file 'my_model.h5'
     
