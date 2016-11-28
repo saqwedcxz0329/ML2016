@@ -54,28 +54,38 @@ def testGensim(doc):
 	for line in sentences:
 		print line
 
+def dimensionReduction(X):
+    svd = TruncatedSVD(2)
+    normalizer = Normalizer(copy=False)
+    lsa = make_pipeline(svd, normalizer)
+    X = lsa.fit_transform(X)
+    return X
+
+def visulization(X):
+    for i in range(20):
+        point = X[np.where(predict_title == i)]
+        point = np.transpose(point)
+        plt.plot(point[0], point[1], '.')
+    plt.show()
+
 doc = open('docs.txt', "r")
 title = open('title_StackOverflow.txt', 'r')
 
 testGensim(doc)
 
-
-#check_list = parseData()
 """
-vectorizer = TfidfVectorizer(max_df=0.5, max_features=5000,
+check_list = parseData()
+vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
                                  min_df=2, stop_words='english')
+
 # Generate word vector
-vectorizer.fit(doc)
+vectorizer.fit(title)
 
 # Transform title to word vector
 X = vectorizer.transform(title)
+X = vectorizer.fit_transform(title)
 
-
-svd = TruncatedSVD(2)
-normalizer = Normalizer(copy=False)
-lsa = make_pipeline(svd, normalizer)
-X = lsa.fit_transform(X)
-
+#X = dimensionReduction(X)
 
 km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=100, n_init=1,
                 verbose=True)
@@ -83,12 +93,8 @@ km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=100, n_init=1,
 # Fit and predict the title
 predict_title = km.fit_predict(X)
 predict(predict_title, check_list)
-"""
-'''
-for i in range(20):
-    point = X[np.where(predict_title == i)]
-    point = np.transpose(point)
-    plt.plot(point[0], point[1], '.')
 
-plt.show()
-'''
+
+# Visualization
+#visulization(X)
+"""
