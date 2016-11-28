@@ -7,10 +7,9 @@ from sklearn.pipeline import make_pipeline
 from sklearn.cluster import KMeans
 import numpy as np
 import matplotlib.pyplot as plt
-
-categories = ['wordpress', 'oracle', 'svn', 'apache', 'excel', 'matlab', 'visual-studio',
-'cocoa', 'osx', 'bash', 'spring', 'hibernate', 'scala', 'sharepoint', 'ajax', 'qt', 'drupal',
-'linq', 'haskell', 'magento']
+from gensim.models import doc2vec
+from nltk.corpus import stopwords
+from stop_words import get_stop_words
 
 cluster_num = 20
 
@@ -37,11 +36,33 @@ def predict(predict_title, check_list):
         ans = int(predict_title[x_index] == predict_title[y_index])
         predict_file.write("%d,%d\n" %(i, ans))
 
+def testGensim(doc):
+	file = open("test.txt", "w+")
+	stopwords = set(get_stop_words('english'))
+	stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')', '[', ']', '{', '}', ' '])
+	text = 'Hello bye the the. hi . !'
+	pre_sentences = []
+	for line in doc:
+		if line != '\n':
+			text = ' '.join([word for word in line.lower().split() if word not in stopwords])
+			pre_sentences.append(text)
+			if text != '':
+				file.write(text)
+				file.write('\n')
+	sentences=doc2vec.TaggedLineDocument(file)
+	model = doc2vec.Doc2Vec(sentences,size = 100, window = 300, min_count = 10, workers=4)
+	for line in sentences:
+		print line
+
 doc = open('docs.txt', "r")
 title = open('title_StackOverflow.txt', 'r')
-check_list = parseData()
 
-vectorizer = TfidfVectorizer(max_df=0.5, max_features=500,
+testGensim(doc)
+
+
+#check_list = parseData()
+"""
+vectorizer = TfidfVectorizer(max_df=0.5, max_features=5000,
                                  min_df=2, stop_words='english')
 # Generate word vector
 vectorizer.fit(doc)
@@ -62,10 +83,12 @@ km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=100, n_init=1,
 # Fit and predict the title
 predict_title = km.fit_predict(X)
 predict(predict_title, check_list)
-
+"""
+'''
 for i in range(20):
     point = X[np.where(predict_title == i)]
     point = np.transpose(point)
     plt.plot(point[0], point[1], '.')
 
 plt.show()
+'''
