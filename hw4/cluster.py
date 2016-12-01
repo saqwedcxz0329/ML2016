@@ -10,12 +10,18 @@ import matplotlib.pyplot as plt
 from gensim.models import doc2vec
 from stop_words import get_stop_words
 import logging
+import sys
 
 cluster_num = 20
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+data_directory = sys.argv[1]
+output_file = sys.argv[2]
+title_path = data_directory +  '/title_StackOverflow.txt'
+check_index_path = data_directory + '/check_index.csv'
+doc_path = data_directory + '/docs.txt'
 
 def parseData():
-    check_index = open('check_index.csv', 'r')
+    check_index = open(check_index_path, 'r')
     check_list = []
     check_index.readline()
     for line in check_index.readlines():
@@ -28,16 +34,22 @@ def parseData():
     del check_index
     return check_list
 
-def parseTitle():
-    file = open('process_title.txt', 'r')
+def parseTitle(file):
+    #file = open('process_title.txt', 'r')
     title_list = []
     for line in file:
         title_list.append(line.split())
-    file.close()
+    #file.close()
     return title_list
 
+def convertTitle(title):
+    X = []
+    for line in title:
+        X.append(model.infer_vector(line))
+    return X
+
 def predict(predict_title, check_list):
-    predict_file = open("predict.csv", "w")
+    predict_file = open(output_file, "w")
     predict_file.write("ID,Ans\n")
     for i in range(len(check_list)):
         row = check_list[i]
@@ -49,11 +61,11 @@ def predict(predict_title, check_list):
 
 def preProcessingDoc(doc, output_file_name):
     file = open(output_file_name, "w+")
+    stopwords = set(get_stop_words('english'))
     stopwords = set(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
          '[', ']', '{', '}', ' ', '==', '!=', '>', '<', '//', '};',
           '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#'])
     """
-    stopwords = set(get_stop_words('english'))
     stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
          '[', ']', '{', '}', ' ', '==', '!=', '>', '<', '//', '};',
           '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#'])
@@ -75,58 +87,59 @@ def wordVector(doc, title):
     return model
 
 def dimensionReduction(X):
-    svd = TruncatedSVD(15)
+    svd = TruncatedSVD(20)
     normalizer = Normalizer(copy=False)
     lsa = make_pipeline(svd, normalizer)
     X = lsa.fit_transform(X)
     return X
 
-def visulization(X):
+def visulization(X, predict_title):
     for i in range(20):
         point = X[np.where(predict_title == i)]
         point = np.transpose(point)
         plt.plot(point[0], point[1], '.')
     plt.show()
 
-#preProcessingDoc(open('docs.txt', "r"), 'process_doc.txt')
-#doc = open('process_doc.txt', 'r')
-preProcessingDoc(open('title_StackOverflow.txt', 'r'), 'process_title.txt')
+preProcessingDoc(open(doc_path, "r"), 'process_doc.txt')
+doc = open('process_doc.txt', 'r')
+preProcessingDoc(open(title_path, 'r'), 'process_title.txt')
 title = open('process_title.txt', 'r')
 
-"""
 model = wordVector(doc, title)
-title_list = parseTitle()
+X = convertTitle(title)
+
+doc.close()
+title.close()
+
+"""
+title_list = parseTitle(title)
 for i in range(len(title_list)):
     title = title_list[i]
     title_list[i] = model.infer_vector(title)
+"""
 
 km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=500, n_init=1,
                 verbose=True)
 
 # Fit and predict the title
-predict_title = km.fit_predict(title_list)
+predict_title = km.fit_predict(X)
 check_list = parseData()
 predict(predict_title, check_list)
-"""
 
 ###################################################################
+"""
 
 vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
                                  min_df=2, stop_words='english')
 
-# Generate features vector
-#vectorizer.fit(doc)
-
-# Transform title to features vector
-#X = vectorizer.transform(title)
-
+# Fit and transform title to features vector
 X = vectorizer.fit_transform(title)
 
 print X.shape
 
 X = dimensionReduction(X)
 
-km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=100, n_init=1,
+km = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1,
                 verbose=True)
 
 # Fit and predict the title
@@ -135,4 +148,5 @@ check_list = parseData()
 predict(predict_title, check_list)
 
 # Visualization
-#visulization(X)
+#visulization(X, predict_title)
+"""
