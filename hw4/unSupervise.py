@@ -1,14 +1,12 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import Normalizer
 from sklearn.pipeline import make_pipeline
 from sklearn.cluster import KMeans
-import numpy as np
-import matplotlib.pyplot as plt
 from gensim.models import doc2vec
 from stop_words import get_stop_words
+import numpy as np
+import matplotlib.pyplot as plt
 import logging
 import sys
 
@@ -34,18 +32,11 @@ def parseData():
     del check_index
     return check_list
 
-def parseTitle(file):
-    #file = open('process_title.txt', 'r')
-    title_list = []
-    for line in file:
-        title_list.append(line.split())
-    #file.close()
-    return title_list
-
 def convertTitle(title):
     X = []
     for line in title:
-        X.append(model.infer_vector(line))
+        tmp = line.split()
+        X.append(model.infer_vector(tmp))
     return X
 
 def predict(predict_title, check_list):
@@ -65,11 +56,6 @@ def preProcessingDoc(doc, output_file_name):
     stopwords = set(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
          '[', ']', '{', '}', ' ', '==', '!=', '>', '<', '//', '};',
           '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#'])
-    """
-    stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
-         '[', ']', '{', '}', ' ', '==', '!=', '>', '<', '//', '};',
-          '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#'])
-    """
     for line in doc:
         if line != '\n':
             text = ' '.join([word for word in line.lower().split() if word not in stopwords])
@@ -80,7 +66,7 @@ def preProcessingDoc(doc, output_file_name):
 
 def wordVector(doc, title):
     sentences=doc2vec.TaggedLineDocument(doc)
-    model = doc2vec.Doc2Vec(size = 100, window = 300, min_count = 5, workers=10, alpha=0.025, min_alpha = 0.025)
+    model = doc2vec.Doc2Vec(size = 100, window = 300, min_count = 5, workers=10)
     model.build_vocab(sentences)
     model.train(sentences)
 
@@ -88,7 +74,7 @@ def wordVector(doc, title):
 
 def dimensionReduction(X):
     svd = TruncatedSVD(20)
-    normalizer = Normalizer(copy=False)
+    normalizer = Normalizer(copy=True)
     lsa = make_pipeline(svd, normalizer)
     X = lsa.fit_transform(X)
     return X
@@ -100,6 +86,8 @@ def visulization(X, predict_title):
         plt.plot(point[0], point[1], '.')
     plt.show()
 
+## Word vector ##
+"""
 preProcessingDoc(open(doc_path, "r"), 'process_doc.txt')
 doc = open('process_doc.txt', 'r')
 preProcessingDoc(open(title_path, 'r'), 'process_title.txt')
@@ -111,13 +99,6 @@ X = convertTitle(title)
 doc.close()
 title.close()
 
-"""
-title_list = parseTitle(title)
-for i in range(len(title_list)):
-    title = title_list[i]
-    title_list[i] = model.infer_vector(title)
-"""
-
 km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=500, n_init=1,
                 verbose=True)
 
@@ -125,15 +106,21 @@ km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=500, n_init=1,
 predict_title = km.fit_predict(X)
 check_list = parseData()
 predict(predict_title, check_list)
+"""
 
 ###################################################################
-"""
+
+## Tf-Idf ##
+
+preProcessingDoc(open(title_path, 'r'), 'process_title.txt')
+title = open(title_path, 'r')
 
 vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
                                  min_df=2, stop_words='english')
 
 # Fit and transform title to features vector
 X = vectorizer.fit_transform(title)
+title.close()
 
 print X.shape
 
@@ -149,4 +136,3 @@ predict(predict_title, check_list)
 
 # Visualization
 #visulization(X, predict_title)
-"""
