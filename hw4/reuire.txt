@@ -1,0 +1,11 @@
+Scikit-learn requires:
+
+    Python (>= 2.6 or >= 3.3),
+    NumPy (>= 1.6.1),
+    SciPy (>= 0.9).
+
+If you already have a working installation of numpy and scipy, the easiest way to install scikit-learn is using pip
+
+sudo pip install -U scikit-learn
+sudo pip install -U gensim
+sudo pip install stop-words
