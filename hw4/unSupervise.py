@@ -32,9 +32,9 @@ def parseData():
     del check_index
     return check_list
 
-def convertTitle(title):
+def convertTitle(file):
     X = []
-    for line in title:
+    for line in file:
         tmp = line.split()
         X.append(model.infer_vector(tmp))
     return X
@@ -53,7 +53,7 @@ def predict(predict_title, check_list):
 def preProcessingDoc(doc, output_file_name):
     file = open(output_file_name, "w+")
     stopwords = set(get_stop_words('english'))
-    stopwords = set(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
+    stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
          '[', ']', '{', '}', ' ', '==', '!=', '>', '<', '//', '};',
           '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#'])
     for line in doc:
@@ -62,9 +62,10 @@ def preProcessingDoc(doc, output_file_name):
             if text != '':
                 file.write(text)
                 file.write('\n')
+    doc.close()
     file.close()
 
-def wordVector(doc, title):
+def wordVector(doc):
     sentences=doc2vec.TaggedLineDocument(doc)
     model = doc2vec.Doc2Vec(size = 100, window = 300, min_count = 5, workers=10)
     model.build_vocab(sentences)
@@ -79,25 +80,59 @@ def dimensionReduction(X):
     X = lsa.fit_transform(X)
     return X
 
-def visulization(X, predict_title):
-    for i in range(20):
-        point = X[np.where(predict_title == i)]
+def visulization(X, predict_cluster):
+    for i in range(cluster_num):
+        point = X[np.where(predict_cluster == i)]
         point = np.transpose(point)
         plt.plot(point[0], point[1], '.')
     plt.show()
+
+def findMostCommonWords(title_list, predict_cluster):
+    print len(title_list)
+    for m in range(cluster_num):
+        print "==============%s==============" %str(m)
+        file_name = "cluster_%s.txt" %str(m)
+        file = open(file_name, 'w')
+        for j in np.where(predict_cluster == m)[0]:
+            file.write(title_list[j])
+        file.close()
+
+        cluster_file = open(file_name, 'r')
+        vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
+                                 min_df=2, stop_words='english')
+        X = vectorizer.fit_transform(cluster_file)
+        print X.shape
+        cluster_file.close()
+        idf = vectorizer.idf_
+        max_idf = max(idf)
+        feature_names = vectorizer.get_feature_names()
+        max_index = [i for i, j in enumerate(idf) if j == max_idf]
+        good_words = open("goodWord_%s.txt" %str(m), 'w')
+        for i in max_index:
+            good_words.write(feature_names[i])
+            good_words.write('\n')
+
+
+
+def getTitleList(file):
+    title_list = []
+    for line in file.readlines():
+        title_list.append(line)
+    file.close()
+    return title_list
 
 ## Word vector ##
 """
 preProcessingDoc(open(doc_path, "r"), 'process_doc.txt')
 doc = open('process_doc.txt', 'r')
 preProcessingDoc(open(title_path, 'r'), 'process_title.txt')
-title = open('process_title.txt', 'r')
+title_file = open('process_title.txt', 'r')
 
-model = wordVector(doc, title)
-X = convertTitle(title)
+model = wordVector(doc)
+X = convertTitle(title_file)
 
 doc.close()
-title.close()
+title_file.close()
 
 km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=500, n_init=1,
                 verbose=True)
@@ -113,26 +148,38 @@ predict(predict_title, check_list)
 ## Tf-Idf ##
 
 preProcessingDoc(open(title_path, 'r'), 'process_title.txt')
-title = open(title_path, 'r')
+
+
+#print title_list
+title_file = open('process_title.txt', 'r')
 
 vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
                                  min_df=2, stop_words='english')
 
 # Fit and transform title to features vector
-X = vectorizer.fit_transform(title)
-title.close()
+X = vectorizer.fit_transform(title_file)
 
-print X.shape
+title_file.close()
+#TfidfVectorizer = vectorizer.fit(title_file)
+
+#X = TfidfVectorizer.transform(title_file)
+
 
 X = dimensionReduction(X)
+
 
 km = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1,
                 verbose=True)
 
 # Fit and predict the title
-predict_title = km.fit_predict(X)
-check_list = parseData()
-predict(predict_title, check_list)
+predict_cluster = km.fit_predict(X)
+#check_list = parseData()
+#predict(predict_cluster, check_list)
 
 # Visualization
 #visulization(X, predict_title)
+title_file = open('process_title.txt', 'r')
+title_list = getTitleList(title_file)
+title_file.close()
+findMostCommonWords(title_list, predict_cluster)
+
