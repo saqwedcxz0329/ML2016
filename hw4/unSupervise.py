@@ -6,6 +6,9 @@ from sklearn.cluster import KMeans
 from gensim.models import doc2vec
 from stop_words import get_stop_words
 from sklearn.decomposition import PCA
+from matplotlib.pyplot import cm 
+import matplotlib.colors as colors
+from MulticoreTSNE import MulticoreTSNE as TSNE
 import numpy as np
 import matplotlib.pyplot as plt
 import logging
@@ -97,18 +100,27 @@ def dimensionReduction(X):
 
 def visulization(X, predict_cluster, figure_num = 1):
     fig = plt.figure(figure_num)
+    #color=iter(cm.rainbow(np.linspace(0,1,cluster_num)))
+    color = [colors.cnames['peru'], colors.cnames['orange'], colors.cnames['teal'], colors.cnames['red'], colors.cnames['goldenrod'],
+            colors.cnames['seashell'], colors.cnames['gray'], colors.cnames['coral'], colors.cnames['springgreen'], colors.cnames['tomato'], 
+            colors.cnames['gold'], colors.cnames['navy'], colors.cnames['crimson'], colors.cnames['darkseagreen'], colors.cnames['lightsalmon'], 
+            colors.cnames['ivory'], colors.cnames['darkslategray'], colors.cnames['deepskyblue'], colors.cnames['brown'], colors.cnames['mediumorchid']]
     for i in range(cluster_num):
+        #c = next(color)
         point = X[np.where(predict_cluster == i)]
         point = np.transpose(point)
-        plt.plot(point[0], point[1], 'o')
+        plt.plot(point[0], point[1], 'o', color = color[i], label = str(i))
+    plt.legend(loc='best')
     plt.xlabel('X')
     plt.ylabel('Y')
     if figure_num == 1:
         plt.title('Predict Label Visulization')
         fig.canvas.set_window_title('Predict Label Visulization')
+        fig.savefig("predict.png")
     else:
         plt.title('True Label Visulization')
         fig.canvas.set_window_title('True Label Visulization')
+        fig.savefig("true.png")
     fig.show()
 
 def findMostCommonWords(title_list, predict_cluster):
@@ -204,8 +216,13 @@ predict_cluster = km.fit_predict(X)
 #predict(predict_cluster, check_list)
 
 # Visualization
-pca=PCA(n_components=2)
-pca.fit_transform(X)
+
+#pca=PCA(n_components=2)
+#X = pca.fit_transform(X)
+
+tsne = TSNE(n_components=2, perplexity=30, init='pca', verbose=2)
+X = tsne.fit_transform(X)
+
 print "(data_number, dimension) " + str(X.shape)
 visulization(X, predict_cluster,1)
 true_cluster = parseTrueLabel()
