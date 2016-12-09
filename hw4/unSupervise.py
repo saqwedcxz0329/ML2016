@@ -110,7 +110,7 @@ def visulization(X, predict_cluster, figure_num = 1):
         point = X[np.where(predict_cluster == i)]
         point = np.transpose(point)
         plt.plot(point[0], point[1], 'o', color = color[i], label = str(i))
-    plt.legend(loc='best')
+    #plt.legend(loc='best')
     plt.xlabel('X')
     plt.ylabel('Y')
     if figure_num == 1:
