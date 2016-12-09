@@ -1,4 +1,5 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+from sklearn.feature_extraction import DictVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import Normalizer
 from sklearn.pipeline import make_pipeline
@@ -74,7 +75,7 @@ def wordVector(doc):
     return model
 
 def dimensionReduction(X):
-    svd = TruncatedSVD(20)
+    svd = TruncatedSVD(100)
     normalizer = Normalizer(copy=True)
     lsa = make_pipeline(svd, normalizer)
     X = lsa.fit_transform(X)
@@ -156,14 +157,13 @@ title_file = open('process_title.txt', 'r')
 vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
                                  min_df=2, stop_words='english')
 
+#vectorizer = CountVectorizer(max_df=0.5, max_features=15,
+#                                 min_df=2, stop_words='english')
+
 # Fit and transform title to features vector
 X = vectorizer.fit_transform(title_file)
 
 title_file.close()
-#TfidfVectorizer = vectorizer.fit(title_file)
-
-#X = TfidfVectorizer.transform(title_file)
-
 
 X = dimensionReduction(X)
 
@@ -173,13 +173,15 @@ km = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1,
 
 # Fit and predict the title
 predict_cluster = km.fit_predict(X)
-#check_list = parseData()
-#predict(predict_cluster, check_list)
+check_list = parseData()
+predict(predict_cluster, check_list)
 
 # Visualization
 #visulization(X, predict_title)
+
+"""
 title_file = open('process_title.txt', 'r')
 title_list = getTitleList(title_file)
 title_file.close()
 findMostCommonWords(title_list, predict_cluster)
-
+"""
