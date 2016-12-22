@@ -1,39 +1,68 @@
 import pandas as pd
 import numpy as np
 
-dtypes = {'uuid': np.str_, 'document_id': np.int32, 'timestamp': np.int32, 'platform': np.int32, 'geo_location': np.str_}
+def groupbyConfidence(dframe):
+    # Only leave the higher confidence value
+    idx = dframe.groupby(["document_id"])["confidence_level"].transform(max) == dframe['confidence_level']
+    return dframe[idx]
+
+def getID(row, col, dframe):
+    # Get the doucment_id through display_id(event.csv) or ad_id(promoted_content.csv)
+    elementID = row[col]
+    elementDocID = dframe.loc[dframe[col] == elementID]
+    ID = elementDocID["document_id"].iloc[0]
+    return ID
+
+def getFeature(dframe, docID, col):
+    # Get the feature through documet_*.csv file
+    # docID: document_id
+    dframe = dframe.loc[dframe["document_id"] == docID]
+    if dframe.empty:
+        return 0
+    else:
+        num = dframe[col].iloc[0]
+        return num
 
 train = pd.read_csv("./data/clicks_train.csv")
 promoted = pd.read_csv("./data/promoted_content.csv")
+events = pd.read_csv("./data/events.csv")
 docCategories = pd.read_csv("./data/documents_categories.csv")
-idx = docCategories.groupby(["document_id"])["confidence_level"].transform(max) == docCategories['confidence_level']
-docCategories = docCategories[idx]
+docCategories = groupbyConfidence(docCategories)
 docTopics = pd.read_csv("./data/documents_topics.csv")
-idx = docTopics.groupby(["document_id"])["confidence_level"].transform(max) == docTopics['confidence_level']
-docTopics = docTopics[idx]
-
-#print promoteda
-#print promoted.loc[promoted["ad_id"] == 1]
-#print docCategories.loc[docCategories["document_id"] == 691188]
-
-print docTopics.loc[ docTopics["document_id"]== 514201]
+docTopics = groupbyConfidence(docTopics)
+#docMeta = pd.read_csv("./data/documents_meta.csv")
+#features_file = open("features.txt", "w")
 
 
-for adID in train["ad_id"]:
-    adDocID = promoted.loc[promoted["ad_id"] == adID]
-    docID = adDocID["document_id"].iloc[0]
-    #print docIdIndex
-    dframeCategories =  docCategories.loc[docCategories["document_id"] == docID]
-    #dframeCategories = dframeCategories.loc[dframeCategories["confidence_level"] > 0.5]a
+print "Start..."
+for index, row in train.iterrows():
+    print index
+    label = row["clicked"]
+
+    docID = getID(row, "display_id", events)
+    category = getFeature(docCategories, docID, "category_id")
+    topic = getFeature(docTopics, docID, "topic_id")
+    #source = getFeature(docMeta, docID, "source_id")
+
     
-    dframeTopics =  docTopics.loc[docTopics["document_id"] == docID]
-    #dframeTopics = dframeTopics.loc[dframeTopics["confidence_level"] > 0.5]
+    print "By display_id... %d" %docID
+    print "Category: %d" %category
+    print "Topic: %d" %topic
+    #print "source: %d" %source
     
-    print "ad id: %d" %adID
-    print "document id: %d" %docID
-    print dframeCategories["category_id"].iloc[0]
-    print dframeTopics["topic_id"].iloc[0]
+    #features_file.write("%s %s %s " %(str(category), str(topic), str(source)))
 
+    adID = getID(row, "ad_id", promoted)
+    category = getFeature(docCategories, adID, "category_id")
+    topic = getFeature(docTopics, adID, "topic_id")
+    #source = getFeature(docMeta, adID, "source_id")
+    
+    print "By ad_id... %d" %adID
+    print "Category: %d" %category
+    print "Topic: %d" %topic
+    #print "source: %d" %source
+    
+    #features_file.write("%s %s %s %s \n" %(str(category), str(topic), str(source), str(label)))
 
 #ad_likelihood = train.groupby('document_id').clicked.agg(['count','sum','mean']).reset_index()
 #M = train.clicked.mean()
