@@ -16,6 +16,8 @@ import sys
 import re
 import os
 
+os.system("rm ./cluster_*")
+os.system("rm ./goodWord_*")
 cluster_num = 20
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 data_directory = sys.argv[1]
@@ -73,7 +75,7 @@ def preProcessingDoc(doc, output_file_name):
     stopwords = set(get_stop_words('english'))
     stopwords.update(['.', ',', '"', "'", '?', '!', ':', ';', '(', ')',
          '[', ']', '{', '}', ' ', '==', '!=', '>', '<', '//', '};',
-          '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#'])
+          '=', '--', '||', '&&', '+', '-', '*', '/', '_', '&', '#', 'using', 'use'])
     for line in doc:
         if line != '\n':
             text = ' '.join([word for word in line.lower().split() if word not in stopwords])
@@ -124,7 +126,7 @@ def visulization(X, predict_cluster, figure_num = 1):
     fig.show()
 
 def findMostCommonWords(title_list, predict_cluster):
-    print len(title_list)
+    print "titile_num: " + str(len(title_list))
     title_list = preprocess(title_list)
     for m in range(cluster_num):
         print "==============%s==============" %str(m)
@@ -134,23 +136,33 @@ def findMostCommonWords(title_list, predict_cluster):
         for j in np.where(predict_cluster == m)[0]:
             cluster_list.append(title_list[j])
             file.write(title_list[j])
+            file.write('\n')
         file.close()
 
         cluster_file = open(file_name, 'r')
-        vectorizer = TfidfVectorizer(max_df=0.5, max_features=None,
+        vectorizer = TfidfVectorizer(max_df=0.5, max_features=5,
                                  min_df=2, stop_words='english')
         X = vectorizer.fit_transform(cluster_list)
+        print "(data_num, dimension)"
         print X.shape
+        print vectorizer.get_feature_names()
         cluster_file.close()
         idf = vectorizer.idf_
+        print idf
         max_idf = max(idf)
         feature_names = vectorizer.get_feature_names()
-        max_index = [i for i, j in enumerate(idf) if j == max_idf]
+        
         good_words = open("goodWord_%s.txt" %str(m), 'w')
+        for line in feature_names:
+            good_words.write(line)
+            good_words.write('\n')
+        """
+        max_index = [i for i, j in enumerate(idf) if j == max_idf]
         for i in max_index:
+            print feature_names[i]
             good_words.write(feature_names[i])
             good_words.write('\n')
-
+        """
 def preprocess(data):
     for i in range(len(data)):
         parts = re.compile('\w+').findall(data[i])
@@ -163,30 +175,6 @@ def getTitleList(file):
         title_list.append(line)
     file.close()
     return title_list
-
-## Word vector ##
-"""
-preProcessingDoc(open(doc_path, "r"), 'process_doc.txt')
-doc = open('process_doc.txt', 'r')
-preProcessingDoc(open(title_path, 'r'), 'process_title.txt')
-title_file = open('process_title.txt', 'r')
-
-model = wordVector(doc)
-X = convertTitle(title_file)
-
-doc.close()
-title_file.close()
-
-km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=500, n_init=1,
-                verbose=True)
-
-# Fit and predict the title
-predict_title = km.fit_predict(X)
-check_list = parseData()
-predict(predict_title, check_list)
-"""
-
-###################################################################
 
 ## Tf-Idf ##
 
@@ -204,11 +192,9 @@ X = vectorizer.fit_transform(title_file)
 
 title_file.close()
 
-
 X = dimensionReduction(X)
 
-
-km = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1)
+km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=100, n_init=1)
 
 # Fit and predict the title
 predict_cluster = km.fit_predict(X)
@@ -217,6 +203,7 @@ predict_cluster = km.fit_predict(X)
 
 # Visualization
 
+"""
 #pca=PCA(n_components=2)
 #X = pca.fit_transform(X)
 
@@ -227,6 +214,7 @@ print "(data_number, dimension) " + str(X.shape)
 visulization(X, predict_cluster,1)
 true_cluster = parseTrueLabel()
 visulization(X, true_cluster,2)
+"""
 
 # Find good words
 title_file = open('process_title.txt', 'r')
@@ -234,4 +222,4 @@ title_list = getTitleList(title_file)
 title_file.close()
 findMostCommonWords(title_list, predict_cluster)
 
-raw_input()
+#raw_input()
