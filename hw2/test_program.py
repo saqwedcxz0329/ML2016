@@ -8,7 +8,7 @@ class test_program(object):
         self.test_set = []
 
     def parseTestData(self, filename):
-        test_data = open(os.getcwd() + "/%s" %filename, "r")
+        test_data = open("/%s" %filename, "r")
         for line in test_data.readlines():
             tmp = line.split(",")
             tmp_test_set = tmp[1:len(tmp)]
