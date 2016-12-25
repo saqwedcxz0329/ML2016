@@ -30,40 +30,54 @@ docCategories = pd.read_csv("./data/documents_categories.csv")
 docCategories = groupbyConfidence(docCategories)
 docTopics = pd.read_csv("./data/documents_topics.csv")
 docTopics = groupbyConfidence(docTopics)
-#docMeta = pd.read_csv("./data/documents_meta.csv")
-#features_file = open("features.txt", "w")
-
+docMeta = pd.read_csv("./data/documents_meta.csv")
+features_file = open("features.txt", "w")
 
 print "Start..."
+adID = train["ad_id"].tolist()
+promoted = promoted[promoted["ad_id"].isin(adID)]
+#promoted.to_csv("./process_promoted.csv")
+docID = promoted["document_id"].tolist()
+docCategoriesForAd = docCategories[docCategories["document_id"].isin(docID)]
+docTopicsForAd = docTopics[docTopics["document_id"].isin(docID)]
+
+displayID = train["display_id"].tolist()
+events = events[events["display_id"].isin(displayID)]
+docID = events["document_id"].tolist()
+docCategoriesForEvent = docCategories[docCategories["document_id"].isin(docID)]
+docTopicsForEvent = docTopics[docTopics["document_id"].isin(docID)]
+
+del docCategories
+del docTopics
+
 for index, row in train.iterrows():
     print index
     label = row["clicked"]
 
-    docID = getID(row, "display_id", events)
-    category = getFeature(docCategories, docID, "category_id")
-    topic = getFeature(docTopics, docID, "topic_id")
-    #source = getFeature(docMeta, docID, "source_id")
-
+    display_id = row["display_id"]
+    docID = events.iloc[[display_id-1]]["document_id"].iloc[0]
+    #docID = getID(row, "display_id", events)
+    category = getFeature(docCategoriesForEvent, docID, "category_id")
+    topic = getFeature(docTopicsForEvent, docID, "topic_id")
+    source = getFeature(docMeta, docID, "source_id")
     
-    print "By display_id... %d" %docID
-    print "Category: %d" %category
-    print "Topic: %d" %topic
-    #print "source: %d" %source
-    
-    #features_file.write("%s %s %s " %(str(category), str(topic), str(source)))
+    #print "By display_id... %d" %docID
+    #print "Category: %d" %category
+    #print "Topic: %d" %topic
 
+    features_file.write("%s %s %s " %(str(category), str(topic), str(source)))
     adID = getID(row, "ad_id", promoted)
-    category = getFeature(docCategories, adID, "category_id")
-    topic = getFeature(docTopics, adID, "topic_id")
-    #source = getFeature(docMeta, adID, "source_id")
+    category = getFeature(docCategoriesForAd, adID, "category_id")
+    topic = getFeature(docTopicsForAd, adID, "topic_id")
+    source = getFeature(docMeta, adID, "source_id")
     
-    print "By ad_id... %d" %adID
-    print "Category: %d" %category
-    print "Topic: %d" %topic
+    #print "By ad_id... %d" %adID
+    #print "Category: %d" %category
+    #print "Topic: %d" %topic
     #print "source: %d" %source
-    
-    #features_file.write("%s %s %s %s \n" %(str(category), str(topic), str(source), str(label)))
+    features_file.write("%s %s %s %s \n" %(str(category), str(topic), str(source), str(label)))
 
 #ad_likelihood = train.groupby('document_id').clicked.agg(['count','sum','mean']).reset_index()
 #M = train.clicked.mean()
+
 del train
