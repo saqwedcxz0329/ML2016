@@ -16,7 +16,7 @@ class logisticRegression(object):
         self.past_gradients = []
     
     def parseData(self, filename):
-        train_data = open(os.getcwd() + "/%s" %filename, "r")
+        train_data = open( "/%s" %filename, "r")
         for line in train_data.readlines():
             tmp = line.split(",")
             tmp_train_set = tmp[1:len(tmp)-1]

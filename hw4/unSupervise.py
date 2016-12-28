@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import logging
 import sys
 
-cluster_num = 20
+cluster_num = 100
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 data_directory = sys.argv[1]
 output_file = sys.argv[2]
@@ -75,7 +75,7 @@ def wordVector(doc):
     return model
 
 def dimensionReduction(X):
-    svd = TruncatedSVD(100)
+    svd = TruncatedSVD(20)
     normalizer = Normalizer(copy=True)
     lsa = make_pipeline(svd, normalizer)
     X = lsa.fit_transform(X)
@@ -168,7 +168,7 @@ title_file.close()
 X = dimensionReduction(X)
 
 
-km = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1,
+km = KMeans(n_clusters=cluster_num, init='k-means++', max_iter=100, n_init=1,
                 verbose=True)
 
 # Fit and predict the title
