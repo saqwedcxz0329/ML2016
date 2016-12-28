@@ -64,14 +64,14 @@ int main(int argc, char *argv[])
     ifstream trainDataFile;
     ofstream featuresFile;
     string inputFolder(argv[1]);
-    string outputFolder(argv[2]);
-    trainDataFile.open(inputFolder + "/clicks_train.csv");
-    featuresFile.open(outputFolder +  "/features.txt");
+    string outputFile(argv[2]);
+    trainDataFile.open(inputFolder + "/clicks_test.csv");
+    featuresFile.open(outputFile);
     string promotedPath = inputFolder + "/order_promoted_content.csv";
-    string eventPath =inputFolder + "/order_events.csv";
-    string categoriesPath =inputFolder + "/order_documents_categories.csv";
-    string topicsPath =inputFolder + "/order_documents_topics.csv";
-    string metaPath =inputFolder + "/order_documents_meta.csv";
+    string eventPath = inputFolder + "/order_events.csv";
+    string categoriesPath = inputFolder + "/order_documents_categories.csv";
+    string topicsPath = inputFolder + "/order_documents_topics.csv";
+    string metaPath = inputFolder + "/order_documents_meta.csv";
 
     cout<<"Processing order_promoted_content.csv"<<endl;
     vector<vector<string> > promotedVector = convertToVector(promotedPath);
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
     {
         cout<<"===="<<index<<"===="<<endl;
         vector<string> rowVector = split(row, ',');
-        string label = rowVector[2];
+//        string label = rowVector[2];
 
         int document_id = -1;
 
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
         stringstream str_doc_id_by_display(eventVector[display_id][2]);
         str_doc_id_by_display >> document_id;
         cout<<document_id<<endl;
-        featuresFile<< docCategoriesVector[document_id][1]<<" "<<docTopicVector[document_id][1]<<" "<<docMetaVector[document_id][1]<<" "<<docMetaVector[document_id][2]<<" ";
+        featuresFile<<display_id<<" "<<docCategoriesVector[document_id][1]<<" "<<docTopicVector[document_id][1]<<" "<<docMetaVector[document_id][1]<<" "<<docMetaVector[document_id][2]<<" ";
 
         stringstream str_ad_id(rowVector[1]);
         int ad_id = -1;
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
         stringstream str_doc_id_by_ad(promotedVector[ad_id][1]);
         str_doc_id_by_ad >> document_id;
         cout<<document_id<<endl;
-        featuresFile<< docCategoriesVector[document_id][1]<<" "<<docTopicVector[document_id][1]<<" "<<docMetaVector[document_id][1]<<" "<<docMetaVector[document_id][2]<<" "<<label<<endl;
+        featuresFile<< docCategoriesVector[document_id][1]<<" "<<docTopicVector[document_id][1]<<" "<<docMetaVector[document_id][1]<<" "<<docMetaVector[document_id][2]<<endl;
 
         index++;
     }
